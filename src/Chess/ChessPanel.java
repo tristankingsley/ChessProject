@@ -94,7 +94,7 @@ public class ChessPanel extends JPanel {
         wBishop = new ImageIcon("./src/W19Project3/wBishop.png");
         wQueen = new ImageIcon("./src/W19Project3/wQueen.png");
         wKing = new ImageIcon("./src/W19Project3/wKing.png");
-        wPawn = new ImageIcon("./src/W19Project3/wPawn.png");
+        wPawn = new ImageIcon("./src/Chess/wPawn.png");
         wKnight = new ImageIcon("./src/W19Project3/wKnight.png");
     }
 
