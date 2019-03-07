@@ -12,11 +12,13 @@ public class King extends ChessPiece {
 	
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
         // More code is needed
-		if((Math.abs(move.toColumn - move.fromColumn)
-				+ Math.abs(move.toRow - move.fromRow) == 1)||
-				(Math.abs(move.toColumn - move.fromColumn) == 1 &&
-						Math.abs(move.toRow - move.fromRow) == 1))
-			return true;
+		if(super.isValidMove(move, board)) {
+			if ((Math.abs(move.toColumn - move.fromColumn)
+					+ Math.abs(move.toRow - move.fromRow) == 1) ||
+					(Math.abs(move.toColumn - move.fromColumn) == 1 &&
+							Math.abs(move.toRow - move.fromRow) == 1))
+				return true;
+		}
 
 		return false;
 	}

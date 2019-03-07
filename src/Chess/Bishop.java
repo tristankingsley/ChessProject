@@ -12,11 +12,13 @@ public class Bishop extends ChessPiece {
 	
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 
-		if(Math.abs(move.fromRow - move.toRow)
-				== Math.abs(move.fromColumn - move.toColumn)&&
-				( move.fromColumn != move.toColumn ||
-				move.fromRow != move.toRow))
-			return true;
+		if(super.isValidMove(move, board)) {
+			if (Math.abs(move.fromRow - move.toRow)
+					== Math.abs(move.fromColumn - move.toColumn) &&
+					(move.fromColumn != move.toColumn ||
+							move.fromRow != move.toRow))
+				return true;
+		}
 
 		return false;
 	}

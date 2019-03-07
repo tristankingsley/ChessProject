@@ -213,14 +213,12 @@ public class ChessPanel extends JPanel {
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
-                            if(model.pieceAt(r, c) == null)
-                                selected.setText("Not Selected");
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
                             if ((model.isValidMove(m)) == true) {
                                 model.move(m);
                                 displayBoard();
-                                selected.setText("Not selected");
                             }
+                            selected.setText("Not selected");
                         }
         }
     }
