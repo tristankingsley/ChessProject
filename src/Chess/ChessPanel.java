@@ -28,6 +28,8 @@ public class ChessPanel extends JPanel {
     private int toRow;
     private int fromCol;
     private int toCol;
+
+    private JLabel selected;
     // declare other intance variables as needed
 
     private listener listener;
@@ -56,7 +58,10 @@ public class ChessPanel extends JPanel {
                 boardpanel.add(board[r][c]);
             }
         }
+        selected = new JLabel("Not selected");
+        selected.setPreferredSize(new Dimension(100,20));
         add(boardpanel, BorderLayout.WEST);
+        add(selected, BorderLayout.EAST);
         boardpanel.setPreferredSize(new Dimension(600, 600));
         add(buttonpanel);
         firstTurnFlag = true;
@@ -200,14 +205,21 @@ public class ChessPanel extends JPanel {
                             fromRow = r;
                             fromCol = c;
                             firstTurnFlag = false;
+                            if(model.pieceAt(r,c) != null)
+                                selected.setText("Selected");
+                            else
+                                selected.setText("Selected Empty");
                         } else {
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
+                            if(model.pieceAt(r, c) == null)
+                                selected.setText("Not Selected");
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
                             if ((model.isValidMove(m)) == true) {
                                 model.move(m);
                                 displayBoard();
+                                selected.setText("Not selected");
                             }
                         }
         }

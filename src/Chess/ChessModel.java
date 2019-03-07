@@ -11,6 +11,7 @@ public class ChessModel implements IChessModel {
 		player = Player.WHITE;
 
 
+
 		for(int i = 0; i < 8; i++)
 			board[6][i] = new Pawn(Player.WHITE);
 
