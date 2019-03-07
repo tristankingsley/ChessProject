@@ -19,7 +19,7 @@ public abstract class ChessPiece implements IChessPiece {
 
 		//  THIS IS A START... More coding needed
 		
-		if (((move.fromRow == move.toRow) && (move.fromColumn == move.toColumn)) == false)
+		if (!((move.fromRow == move.toRow) && (move.fromColumn == move.toColumn)))
 			return valid;
 
 		return false;

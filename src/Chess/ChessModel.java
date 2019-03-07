@@ -24,8 +24,9 @@ public class ChessModel implements IChessModel {
         board[7][6] = new Knight (Player.WHITE);
         board[7][7] = new Rook(Player.WHITE);
 
-		for(int i = 0; i < 8; i++)
+		for(int i = 0; i < 8; i++) {
 			board[1][i] = new Pawn(Player.BLACK);
+		}
 
 
 		board[0][0] = new Rook(Player.BLACK);
@@ -48,7 +49,7 @@ public class ChessModel implements IChessModel {
 		boolean valid = false;
 
 		if (board[move.fromRow][move.fromColumn] != null)
-			if (board[move.fromRow][move.fromColumn].isValidMove(move, board) == true)
+			if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
                 return true;
 
 		return valid;
