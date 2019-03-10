@@ -13,31 +13,49 @@ public class Bishop extends ChessPiece {
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 
 		if(super.isValidMove(move, board)) {
-			if (clearPath(move, board)) {
-				if (Math.abs(move.fromRow - move.toRow)
+				if ((Math.abs(move.fromRow - move.toRow)
 						== Math.abs(move.fromColumn - move.toColumn) &&
 						(move.fromColumn != move.toColumn ||
 								move.fromRow != move.toRow))
+					&& clearPath(move, board))
 					return true;
 			}
-		}
+
 
 		return false;
 	}
 
 	public boolean clearPath(Move move, IChessPiece[][] board){
-		//int to represent spots in between piece before the selected spot
-		int numHops = ( (Math.abs(move.toColumn - move.fromColumn) ) - 1);
 
-		//If statement for moving upward/leftward
-		if (move.toColumn < move.fromColumn &&
-				move.toRow < move.fromRow){
-			//If statement using numHops to look at spots
-			if (board[move.toRow + numHops][move.toColumn + numHops] == null){
-				return true;
-			}
-		}
+		//initialized to 1 if the move happens to be up and right
+		int addX = 1;
+		int addY = 1;
 
-		return false;
+
+		//changes if the move isn't up and right
+		if(move.fromColumn > move.toColumn)
+			addX = -1;
+
+		if(move.fromRow > move.toRow)
+			addY = -1;
+
+		//sets the coordinates of the first cell to be tested
+		int initRow = move.fromRow + addY;
+		int initCol = move.fromColumn + addX;
+
+		//runs until the number of places moved is reached
+		for(int i = 0; i < Math.abs(move.toRow - move.fromRow) - 1; i++) {
+            if (board[initRow][initCol] != null)
+                return false;
+            else {
+
+            	//incremented values based on above
+                initRow += addY;
+                initCol += addX;
+            }
+        }
+
+		return true;
+
 	}
 }

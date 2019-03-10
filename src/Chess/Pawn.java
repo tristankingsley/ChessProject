@@ -14,11 +14,16 @@ public class Pawn extends ChessPiece {
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 
 		if(super.isValidMove(move, board) && board[move.toRow][move.toColumn] == null) {
+			int mult = 1;
+
+			if(board[move.fromRow][move.fromColumn].player() == Player.BLACK)
+				mult = -1;
+
 			if (move.fromRow == 1 || move.fromRow == 6) {
-				if ((move.fromRow - move.toRow) == 2 ||
-						((move.fromRow - move.toRow)) == 1)
+				if ((move.fromRow - move.toRow) == 2 * mult||
+						((move.fromRow - move.toRow)) == 1 * mult)
 					return true;
-			} else if((move.fromRow - move.toRow) == 1)
+			} else if((move.fromRow - move.toRow) == 1 * mult)
 				return true;
 		}
         // More code is needed
