@@ -61,7 +61,7 @@ public class Rook extends ChessPiece {
 		int initCol = move.fromColumn + addX;
 
 		//runs until the number of places moved is reached
-		for(int i = 0; i < numHops; i++) {
+		for(int i = 0; i < numHops + 1; i++) {
 			if (board[initRow][initCol] != null)
 				return false;
 			else {
