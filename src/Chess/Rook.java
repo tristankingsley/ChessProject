@@ -32,8 +32,8 @@ public class Rook extends ChessPiece {
 
 	public boolean clearPath(Move move, IChessPiece[][] board){
 		//numHops calculates # of hops required. Regardless of direction.
-		int numHops = ( ((Math.abs(move.fromRow - move.toRow) * 1) -1) +
-				((Math.abs(move.fromColumn - move.toColumn) * 1) -1) );
+		int numHops =  Math.abs(move.fromRow - move.toRow) +
+				Math.abs(move.fromColumn - move.toColumn) - 1;
 
 		//Set to 1, 0 for default upward movement.
 		int addX = 0;
@@ -61,7 +61,7 @@ public class Rook extends ChessPiece {
 		int initCol = move.fromColumn + addX;
 
 		//runs until the number of places moved is reached
-		for(int i = 0; i < numHops + 1; i++) {
+		for(int i = 0; i < numHops; i++) {
 			if (board[initRow][initCol] != null)
 				return false;
 			else {
