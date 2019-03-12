@@ -97,6 +97,9 @@ public class ChessModel implements IChessModel {
 	    saveSpot += Integer.toString(toRow);
 	    saveSpot += Integer.toString(toCol);
 
+	    //Printing for check purposes
+		System.out.println(saveSpot);
+
 	    //Add string to ArrayList of strings
 	    moveList.add(numMoves, saveSpot);
 
@@ -119,6 +122,10 @@ public class ChessModel implements IChessModel {
 
 			//Creates move object
 			Move m = new Move(fromRow, fromCol, toRow, toCol);
+
+			//Printing to check
+			System.out.println("" + fromRow + fromCol + toRow + toCol);
+
 			//Makes move
 			move(m);
 
