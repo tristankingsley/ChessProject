@@ -16,6 +16,11 @@ public class ChessModel implements IChessModel {
 	    //Creates ArrayList
         moveList = new ArrayList<>();
 
+		//Fills first element of ArrayList with blank
+		// string so that the very FIRST move will line up
+		// with index ONE.
+		moveList.add(numMoves, "");
+
 		board = new IChessPiece[8][8];
 		player = Player.WHITE;
 
@@ -78,6 +83,11 @@ public class ChessModel implements IChessModel {
 	}
 
 	public void saveMove(int fromRow, int fromCol, int toRow, int toCol){
+		//Increment counter for locating moves in ArrayList.
+		//Incremented BEFORE saving to ensure FIRST moves saves in element
+		//ONE for simplicity.
+		numMoves++;
+
 	    //Creates blank string to hold integers turned into strings
 	    String saveSpot = "";
 
@@ -90,36 +100,32 @@ public class ChessModel implements IChessModel {
 	    //Add string to ArrayList of strings
 	    moveList.add(numMoves, saveSpot);
 
-        //Increment counter for locating moves in ArrayList.
-        //Incremented AFTER saving to ensure first moves saves in element
-        //zero.
-        numMoves++;
     }
 
 	public void undoMove(){
-	    //Getting string representation of previous move
-        //Using num moves to ensure accurate index
-        String savedSpot = moveList.get(numMoves - 1);
+		if (numMoves > 0) {
+			//Getting string representation of previous move
+			//Using num moves to ensure accurate index
+			String savedSpot = moveList.get(numMoves);
 
-        //Takes the char at 0, turns it into a string, parses it into an int
-        int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
-        //Takes the char at 1, turns it into a string, parses it into an int
-        int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
-        //Takes the char at 2, turns it into a string, parses it into an int
-        int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
-        //Takes the char at 3, turns it into a string, parses it into an int
-        int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+			//Takes the char at 0, turns it into a string, parses it into an int
+			int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+			//Takes the char at 1, turns it into a string, parses it into an int
+			int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+			//Takes the char at 2, turns it into a string, parses it into an int
+			int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+			//Takes the char at 3, turns it into a string, parses it into an int
+			int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
 
-        //Creates move object
-        Move m = new Move(fromRow, fromCol, toRow, toCol);
-        //Makes move
-        move(m);
+			//Creates move object
+			Move m = new Move(fromRow, fromCol, toRow, toCol);
+			//Makes move
+			move(m);
 
-        //Decrements numMoves to reflect the removal of the element at that index
-        if (numMoves > 0)
-            numMoves--;
-        else
-            numMoves = 0;
+			//Decrements numMoves to reflect the removal of the element at that index
+			numMoves--;
+		} else
+			numMoves = 1;
     }
 
 
