@@ -3,13 +3,14 @@ package Chess;
 public class ChessModel implements IChessModel {	 
     private IChessPiece[][] board;
 	private Player player;
+	//Do we need this here for the Player.BLACK?
+	private Player player2;
 
 	// declare other instance variables as needed
 
 	public ChessModel() {
 		board = new IChessPiece[8][8];
 		player = Player.WHITE;
-
 
 
 		for(int i = 0; i < 8; i++)
@@ -29,6 +30,8 @@ public class ChessModel implements IChessModel {
 			board[1][i] = new Pawn(Player.BLACK);
 		}
 
+		//Do we need this here I'm guessing?
+		player2 = Player.BLACK;
 
 		board[0][0] = new Rook(Player.BLACK);
 		board[0][1] = new Knight(Player.BLACK);
@@ -43,6 +46,7 @@ public class ChessModel implements IChessModel {
 
 	public boolean isComplete() {
 		boolean valid = false;
+
 		return valid;
 	}
 

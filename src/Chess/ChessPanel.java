@@ -8,6 +8,7 @@ public class ChessPanel extends JPanel {
 
     private JButton[][] board;
     private ChessModel model;
+    private JButton undoBtn;
 
     private ImageIcon wRook;
     private ImageIcon wBishop;
@@ -35,6 +36,9 @@ public class ChessPanel extends JPanel {
     private listener listener;
 
     public ChessPanel() {
+        //Undo button
+        undoBtn = new JButton("Undo Move");
+
         model = new ChessModel();
         board = new JButton[model.numRows()][model.numColumns()];
         listener = new listener();
@@ -65,6 +69,9 @@ public class ChessPanel extends JPanel {
         boardpanel.setPreferredSize(new Dimension(600, 600));
         add(buttonpanel);
         firstTurnFlag = true;
+
+        undoBtn.setPreferredSize(new Dimension(150, 40));
+        add(undoBtn, BorderLayout.SOUTH);
     }
 
     private void setBackGroundColor(int r, int c) {
