@@ -13,18 +13,30 @@ public class Pawn extends ChessPiece {
 	// determines if the move is valid for a pawn piece
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 
-		if(super.isValidMove(move, board) && board[move.toRow][move.toColumn] == null) {
-			int mult = 1;
+		if(super.isValidMove(move, board)) {
+			int direction = 1;
 
-			if(board[move.fromRow][move.fromColumn].player() == Player.BLACK)
-				mult = -1;
+			if (board[move.fromRow][move.fromColumn].player() == Player.BLACK)
+				direction = -1;
 
-			if (move.fromRow == 1 || move.fromRow == 6) {
-				if ((move.fromRow - move.toRow) == 2 * mult||
-						((move.fromRow - move.toRow)) == 1 * mult)
+			if (move.fromColumn == move.toColumn && board[move.toRow][move.toColumn] == null) {
+				if (move.fromRow == 1 || move.fromRow == 6) {
+					if ((move.fromRow - move.toRow) == 2 * direction ||
+							((move.fromRow - move.toRow)) == direction)
+						return true;
+				} else if ((move.fromRow - move.toRow) == direction)
 					return true;
-			} else if((move.fromRow - move.toRow) == 1 * mult)
-				return true;
+			}
+//			else
+//				if(board[move.fromRow - direction][move.fromColumn + 1] != null && move.toRow == move.fromRow -1 &&
+//						move
+//							&& move.fromColumn != move.toColumn)
+//					return true;
+//				else if(board[move.fromRow - direction][move.fromColumn - 1] != null
+//						&& move.fromColumn != move.toColumn)
+//							return true;
+
+
 		}
         // More code is needed
 		return false;

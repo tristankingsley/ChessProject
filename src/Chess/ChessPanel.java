@@ -222,11 +222,11 @@ public class ChessPanel extends JPanel {
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
-                            model.saveMove(fromRow, fromCol, toRow, toCol);
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
                             if ((model.isValidMove(m)) == true) {
                                 model.move(m);
                                 displayBoard();
+                                model.saveMove(fromRow, fromCol, toRow, toCol);
                             }
                             selected.setText("Not selected");
                         }

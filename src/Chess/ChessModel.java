@@ -86,22 +86,23 @@ public class ChessModel implements IChessModel {
 		//Increment counter for locating moves in ArrayList.
 		//Incremented BEFORE saving to ensure FIRST moves saves in element
 		//ONE for simplicity.
-		numMoves++;
+			numMoves++;
 
-	    //Creates blank string to hold integers turned into strings
-	    String saveSpot = "";
+			//Creates blank string to hold integers turned into strings
+			String saveSpot = "";
 
-	    //Adding each number to the blank string in specific order
-	    saveSpot += Integer.toString(fromRow);
-	    saveSpot += Integer.toString(fromCol);
-	    saveSpot += Integer.toString(toRow);
-	    saveSpot += Integer.toString(toCol);
+			//Adding each number to the blank string in specific order
+			saveSpot += Integer.toString(fromRow);
+			saveSpot += Integer.toString(fromCol);
+			saveSpot += Integer.toString(toRow);
+			saveSpot += Integer.toString(toCol);
 
-	    //Printing for check purposes
-		System.out.println(saveSpot);
+			//Printing for check purposes
 
-	    //Add string to ArrayList of strings
-	    moveList.add(numMoves, saveSpot);
+			//Add string to ArrayList of strings
+			moveList.add(numMoves, saveSpot);
+
+		System.out.println(moveList);
 
     }
 
@@ -129,10 +130,13 @@ public class ChessModel implements IChessModel {
 			//Makes move
 			move(m);
 
+			moveList.remove(numMoves);
+
 			//Decrements numMoves to reflect the removal of the element at that index
 			numMoves--;
-		} else
-			numMoves = 1;
+
+			System.out.println(moveList);
+		}
     }
 
 
