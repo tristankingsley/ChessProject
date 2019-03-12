@@ -27,14 +27,13 @@ public class Pawn extends ChessPiece {
 				} else if ((move.fromRow - move.toRow) == direction)
 					return true;
 			}
-//			else
-//				if(board[move.fromRow - direction][move.fromColumn + 1] != null && move.toRow == move.fromRow -1 &&
-//						move
-//							&& move.fromColumn != move.toColumn)
-//					return true;
-//				else if(board[move.fromRow - direction][move.fromColumn - 1] != null
-//						&& move.fromColumn != move.toColumn)
-//							return true;
+			else
+				if(!(move.toRow == move.fromRow - direction && move.toColumn == move.fromColumn) &&
+						((board[move.fromRow - direction][move.fromColumn + 1] != null && move.toRow == move.fromRow -1
+						&& move.fromColumn != move.toColumn + 1)
+						||(board[move.fromRow - direction][move.fromColumn - 1] != null
+						&& move.toRow == move.fromRow - direction && move.fromColumn != move.toColumn - 1)))
+					return true;
 
 
 		}
