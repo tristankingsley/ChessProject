@@ -1,14 +1,21 @@
 package Chess;
 
+import java.util.*;
+
 public class ChessModel implements IChessModel {	 
     private IChessPiece[][] board;
 	private Player player;
 	//Do we need this here for the Player.BLACK?
 	private Player player2;
+	private ArrayList<String> moveList;
+	private int numMoves = 0;
 
 	// declare other instance variables as needed
 
 	public ChessModel() {
+	    //Creates ArrayList
+        moveList = new ArrayList<>();
+
 		board = new IChessPiece[8][8];
 		player = Player.WHITE;
 
@@ -69,6 +76,51 @@ public class ChessModel implements IChessModel {
 		boolean valid = false;
 		return valid;
 	}
+
+	public void saveMove(int fromRow, int fromCol, int toRow, int toCol){
+	    //Creates blank string to hold integers turned into strings
+	    String saveSpot = "";
+
+	    //Adding each number to the blank string in specific order
+	    saveSpot += Integer.toString(fromRow);
+	    saveSpot += Integer.toString(fromCol);
+	    saveSpot += Integer.toString(toRow);
+	    saveSpot += Integer.toString(toCol);
+
+	    //Add string to ArrayList of strings
+	    moveList.add(numMoves, saveSpot);
+
+        //Increment counter for locating moves in ArrayList.
+        //Incremented AFTER saving to ensure first moves saves in element
+        //zero.
+        numMoves++;
+    }
+
+	public void undoMove(){
+	    //Getting string representation of previous move
+        //Using num moves to ensure accurate index
+        String savedSpot = moveList.get(numMoves - 1);
+
+        //Takes the char at 0, turns it into a string, parses it into an int
+        int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+        //Takes the char at 1, turns it into a string, parses it into an int
+        int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+        //Takes the char at 2, turns it into a string, parses it into an int
+        int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+        //Takes the char at 3, turns it into a string, parses it into an int
+        int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+
+        //Creates move object
+        Move m = new Move(fromRow, fromCol, toRow, toCol);
+        //Makes move
+        move(m);
+
+        //Decrements numMoves to reflect the removal of the element at that index
+        if (numMoves > 0)
+            numMoves--;
+        else
+            numMoves = 0;
+    }
 
 
 	public Player currentPlayer() {

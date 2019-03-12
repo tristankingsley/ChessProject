@@ -70,6 +70,8 @@ public class ChessPanel extends JPanel {
         add(buttonpanel);
         firstTurnFlag = true;
 
+        //Adds actionlistener, sets size, adds to BorderLayout
+        undoBtn.addActionListener(listener);
         undoBtn.setPreferredSize(new Dimension(150, 40));
         add(undoBtn, BorderLayout.SOUTH);
     }
@@ -205,14 +207,14 @@ public class ChessPanel extends JPanel {
     // inner class that represents action listener for buttons
     private class listener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            for (int r = 0; r < model.numRows(); r++)
-                for (int c = 0; c < model.numColumns(); c++)
-                    if (board[r][c] == event.getSource())
+            for (int r = 0; r < model.numRows(); r++) {
+                for (int c = 0; c < model.numColumns(); c++) {
+                    if (board[r][c] == event.getSource()) {
                         if (firstTurnFlag == true) {
                             fromRow = r;
                             fromCol = c;
                             firstTurnFlag = false;
-                            if(model.pieceAt(r,c) != null)
+                            if (model.pieceAt(r, c) != null)
                                 selected.setText("Selected");
                             else
                                 selected.setText("Selected Empty");
@@ -220,6 +222,7 @@ public class ChessPanel extends JPanel {
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
+                            model.saveMove(fromRow, fromCol, toRow, toCol);
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
                             if ((model.isValidMove(m)) == true) {
                                 model.move(m);
@@ -227,6 +230,12 @@ public class ChessPanel extends JPanel {
                             }
                             selected.setText("Not selected");
                         }
+                    }
+                }
+            }
+            if (undoBtn == event.getSource()){
+                model.undoMove();
+            }
         }
     }
 }
