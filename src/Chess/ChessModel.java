@@ -1,5 +1,6 @@
 package Chess;
 
+import javax.swing.*;
 import java.util.*;
 
 public class ChessModel implements IChessModel {	 
@@ -9,6 +10,31 @@ public class ChessModel implements IChessModel {
 	private Player player2;
 	private ArrayList<String> moveList;
 	private int numMoves = 0;
+	//Variables to copy to location of a piece only if it
+	//is a taken piece
+	private int cloneOfTakenRow = 0;
+	private int cloneOfTakenCol = 0;
+
+	//Various getters and setters
+	public int getNumMoves() {
+		return numMoves;
+	}
+
+	public void setCloneOfTakenRow(int cloneOfTakenRow) {
+		this.cloneOfTakenRow = cloneOfTakenRow;
+	}
+
+	public void setCloneOfTakenCol(int cloneOfTakenCol) {
+		this.cloneOfTakenCol = cloneOfTakenCol;
+	}
+
+	public int getCloneOfTakenRow() {
+		return cloneOfTakenRow;
+	}
+
+	public int getCloneOfTakenCol() {
+		return cloneOfTakenCol;
+	}
 
 	// declare other instance variables as needed
 
@@ -82,31 +108,63 @@ public class ChessModel implements IChessModel {
 		return valid;
 	}
 
+	//Method to return true if a piece of the opposing team was just taken
+//	public boolean pieceTaken(int fromRow, int fromCol, int toRow, int toCol){
+//		boolean taken = false;
+//		//Creates move object from coordinates being saved
+//		Move m = new Move(fromRow, fromCol, toRow, toCol);
+//		//Checks if move is valid and to space is not null
+//		if (isValidMove(m)) {
+//			//Makes sure the pieces are different
+//			if (board[fromRow][fromCol].player() != board[toRow][toCol].player()){
+//				taken = true;
+//			}
+//		}
+//		return taken;
+//	}
+
 	public void saveMove(int fromRow, int fromCol, int toRow, int toCol){
 		//Increment counter for locating moves in ArrayList.
 		//Incremented BEFORE saving to ensure FIRST moves saves in element
 		//ONE for simplicity.
-			numMoves++;
+		numMoves++;
 
-			//Creates blank string to hold integers turned into strings
-			String saveSpot = "";
+		//Creates blank string to hold integers turned into strings
+		String saveSpot = "";
 
-			//Adding each number to the blank string in specific order
-			saveSpot += Integer.toString(fromRow);
-			saveSpot += Integer.toString(fromCol);
-			saveSpot += Integer.toString(toRow);
-			saveSpot += Integer.toString(toCol);
+		//Adding each number to the blank string in specific order
+		saveSpot += Integer.toString(fromRow);
+		saveSpot += Integer.toString(fromCol);
+		saveSpot += Integer.toString(toRow);
+		saveSpot += Integer.toString(toCol);
 
-			//Printing for check purposes
+		//If statement for adding piece type to string if taking a piece
+		// and that piece is not of the current player type
+		if (board[toRow][toCol] != null) {
+			//If the piece you are taking belongs to player1
+			// which would means it is a white piece
+			if (board[toRow][toCol].player().equals(player))
+				saveSpot += "w" + board[toRow][toCol].type();
+			//If the piece you are taking belongs to player2
+			// which would mean it is a black piece
+			else if (board[toRow][toCol].player().equals(player2))
+				saveSpot += "b" + board[toRow][toCol].type();
+			//Saves location of taken piece
+			setCloneOfTakenRow(toRow);
+			setCloneOfTakenCol(toCol);
+		}
 
-			//Add string to ArrayList of strings
-			moveList.add(numMoves, saveSpot);
+		//Add string to ArrayList of strings
+		moveList.add(numMoves, saveSpot);
 
 		System.out.println(moveList);
 
-    }
+	}
 
-	public void undoMove(){
+	public ImageIcon undoMove(){
+		//Blank image icon for return purposes
+		ImageIcon image = new ImageIcon();
+
 		if (numMoves > 0) {
 			//Getting string representation of previous move
 			//Using num moves to ensure accurate index
@@ -124,19 +182,23 @@ public class ChessModel implements IChessModel {
 			//Creates move object
 			Move m = new Move(fromRow, fromCol, toRow, toCol);
 
-			//Printing to check
-			System.out.println("" + fromRow + fromCol + toRow + toCol);
-
 			//Makes move
 			move(m);
 
+			//If statement for ImageIcon
+			if (savedSpot.length() > 4)
+				//Uses substring to create ImageIcon
+				image = new ImageIcon(savedSpot.substring(4));
+
+
+			//Removes element at desired index
 			moveList.remove(numMoves);
 
 			//Decrements numMoves to reflect the removal of the element at that index
 			numMoves--;
 
-			System.out.println(moveList);
 		}
+		return image;
     }
 
 

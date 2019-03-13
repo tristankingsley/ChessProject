@@ -35,6 +35,14 @@ public class ChessPanel extends JPanel {
 
     private listener listener;
 
+    public void setwPawn(ImageIcon wPawn) {
+        this.wPawn = wPawn;
+    }
+
+    public void setbPawn(ImageIcon bPawn) {
+        this.bPawn = bPawn;
+    }
+
     public ChessPanel() {
         //Undo button
         undoBtn = new JButton("Undo Move");
@@ -224,16 +232,22 @@ public class ChessPanel extends JPanel {
                             firstTurnFlag = true;
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
                             if ((model.isValidMove(m)) == true) {
+                                //Saving before moving so that if there is
+                                //a piece in the 'TO' spot, we can save it's
+                                //type before it disappears
+                                model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
                                 displayBoard();
-                                model.saveMove(fromRow, fromCol, toRow, toCol);
                             }
                             selected.setText("Not selected");
                         }
                     }
                 }
             }
-            if (undoBtn == event.getSource()){
+            if (undoBtn == event.getSource()) {
+//                if (model.pieceTaken(fromRow, fromCol, toRow, toCol)) {
+//                    board[model.getCloneOfTakenRow()][model.getCloneOfTakenCol()].setIcon(model.undoMove());
+//                }
                 model.undoMove();
                 displayBoard();
             }
