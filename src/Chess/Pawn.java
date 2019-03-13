@@ -28,10 +28,11 @@ public class Pawn extends ChessPiece {
 					return true;
 			}
 			else
-				if(!(move.toRow == move.fromRow - direction && move.toColumn == move.fromColumn) &&
-						((board[move.fromRow - direction][move.fromColumn + 1] != null && move.toRow == move.fromRow -1
-						&& move.fromColumn != move.toColumn + 1)
-						||(board[move.fromRow - direction][move.fromColumn - 1] != null
+				if((move.fromRow != 0 && move.fromRow != 7) &&
+						!(move.toRow == move.fromRow - direction && move.toColumn == move.fromColumn) &&
+						((move.fromColumn != 7  && board[move.fromRow - direction][move.fromColumn + 1] != null
+								&& move.toRow == move.fromRow -1 && move.fromColumn != move.toColumn + 1)
+						||(move.fromColumn != 0 && board[move.fromRow - direction][move.fromColumn - 1] != null
 						&& move.toRow == move.fromRow - direction && move.fromColumn != move.toColumn - 1)))
 					return true;
 
@@ -40,4 +41,5 @@ public class Pawn extends ChessPiece {
         // More code is needed
 		return false;
 	}
+
 }
