@@ -158,16 +158,14 @@ public class ChessModel implements IChessModel {
 			//If statement for setPiece
 			if (savedSpot.length() > 4) {
                 setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
-            }
+				piecesTaken--;
+			}
 
 			//Removes element at desired index
 			moveList.remove(numMoves);
 
-			//Decrements numMoves & piecesTaken to reflect the removal
-			// of the element at that index
+			//Decrements numMoves to reflect the removal 0f the element at that index
 			numMoves--;
-			piecesTaken--;
-
 		}
     }
 
