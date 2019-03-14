@@ -32,6 +32,8 @@ public class ChessPanel extends JPanel {
 
     private JLabel selected;
     private JLabel turn;
+
+    private JButton reset;
     // declare other intance variables as needed
 
     private listener listener;
@@ -75,11 +77,16 @@ public class ChessPanel extends JPanel {
 
         turn = new JLabel(model.currentPlayer().toString());
 
+        reset = new JButton("Reset");
+
         turn.setPreferredSize(new Dimension(100, 20));
         selected.setPreferredSize(new Dimension(100,20));
         add(boardpanel, BorderLayout.WEST);
         add(selected, BorderLayout.EAST);
         add(turn,BorderLayout.EAST);
+        reset.addActionListener(listener);
+        reset.setPreferredSize(new Dimension(150, 40));
+        add(reset, BorderLayout.SOUTH);
         boardpanel.setPreferredSize(new Dimension(600, 600));
         add(buttonpanel);
         firstTurnFlag = true;
@@ -252,6 +259,12 @@ public class ChessPanel extends JPanel {
                     }
                 }
             }
+            if(reset == event.getSource()){
+                model = new ChessModel();
+                displayBoard();
+            }
+
+
             if (undoBtn == event.getSource()) {
                 model.undoMove();
                 displayBoard();
