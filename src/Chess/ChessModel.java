@@ -88,6 +88,8 @@ public class ChessModel implements IChessModel {
 
 	public boolean inCheck(Player p) {
 		boolean valid = false;
+
+
 		return valid;
 	}
 
