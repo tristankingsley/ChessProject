@@ -20,7 +20,8 @@ public abstract class ChessPiece implements IChessPiece {
 		//  THIS IS A START... More coding needed
 		
 		if (!((move.fromRow == move.toRow) && (move.fromColumn == move.toColumn)) &&
-				((board[move.toRow][move.toColumn] == null) ||
+				(
+						(board[move.toRow][move.toColumn] == null) ||
 				owner != board[move.toRow][move.toColumn].player()))
 
 				return true;

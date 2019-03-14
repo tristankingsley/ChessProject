@@ -14,6 +14,7 @@ public class ChessModel implements IChessModel {
 	private int numMoves = 0;
 	private int piecesTaken = 0;
 
+
 	// declare other instance variables as needed
 
 	public ChessModel() {
@@ -89,21 +90,6 @@ public class ChessModel implements IChessModel {
 		boolean valid = false;
 		return valid;
 	}
-
-	//Method to return true if a piece of the opposing team was just taken
-//	public boolean pieceTaken(int fromRow, int fromCol, int toRow, int toCol){
-//		boolean taken = false;
-//		//Creates move object from coordinates being saved
-//		Move m = new Move(fromRow, fromCol, toRow, toCol);
-//		//Checks if move is valid and to space is not null
-//		if (isValidMove(m)) {
-//			//Makes sure the pieces are different
-//			if (board[fromRow][fromCol].player() != board[toRow][toCol].player()){
-//				taken = true;
-//			}
-//		}
-//		return taken;
-//	}
 
 	public void saveMove(int fromRow, int fromCol, int toRow, int toCol){
 		//Increment counter for locating moves in ArrayList.
