@@ -1,50 +1,32 @@
 package Chess;
 
-import javax.swing.*;
+
 import java.util.*;
 
 public class ChessModel implements IChessModel {	 
     private IChessPiece[][] board;
+    //Temp IChessPiece to copy piece taken
+    private ArrayList<IChessPiece> takenPieces;
 	private Player player;
 	//Do we need this here for the Player.BLACK?
 	private Player player2;
 	private ArrayList<String> moveList;
 	private int numMoves = 0;
-	//Variables to copy to location of a piece only if it
-	//is a taken piece
-	private int cloneOfTakenRow = 0;
-	private int cloneOfTakenCol = 0;
-
-	//Various getters and setters
-	public int getNumMoves() {
-		return numMoves;
-	}
-
-	public void setCloneOfTakenRow(int cloneOfTakenRow) {
-		this.cloneOfTakenRow = cloneOfTakenRow;
-	}
-
-	public void setCloneOfTakenCol(int cloneOfTakenCol) {
-		this.cloneOfTakenCol = cloneOfTakenCol;
-	}
-
-	public int getCloneOfTakenRow() {
-		return cloneOfTakenRow;
-	}
-
-	public int getCloneOfTakenCol() {
-		return cloneOfTakenCol;
-	}
+	private int piecesTaken = 0;
 
 	// declare other instance variables as needed
 
 	public ChessModel() {
-	    //Creates ArrayList
+	    //Creates ArrayList to store move coordinates
         moveList = new ArrayList<>();
 
-		//Fills first element of ArrayList with blank
-		// string so that the very FIRST move will line up
-		// with index ONE.
+        //Creates List for taken pieces
+		takenPieces = new ArrayList<>();
+
+		//Fills first element of both ArrayLists with blank
+		// string/object so that the very FIRST move/take piece
+		// will line up with index ONE.
+		takenPieces.add(piecesTaken, null);
 		moveList.add(numMoves, "");
 
 		board = new IChessPiece[8][8];
@@ -139,19 +121,13 @@ public class ChessModel implements IChessModel {
 		saveSpot += Integer.toString(toCol);
 
 		//If statement for adding piece type to string if taking a piece
-		// and that piece is not of the current player type
 		if (board[toRow][toCol] != null) {
-			//If the piece you are taking belongs to player1
-			// which would means it is a white piece
-			if (board[toRow][toCol].player().equals(player))
-				saveSpot += "w" + board[toRow][toCol].type();
-			//If the piece you are taking belongs to player2
-			// which would mean it is a black piece
-			else if (board[toRow][toCol].player().equals(player2))
-				saveSpot += "b" + board[toRow][toCol].type();
-			//Saves location of taken piece
-			setCloneOfTakenRow(toRow);
-			setCloneOfTakenCol(toCol);
+			//Increment pieces taken for accurate sorting into list
+			piecesTaken++;
+			//Saves piece to string
+			saveSpot += board[toRow][toCol].type();
+			//Saves piece to IChessPiece ArrayList
+			takenPieces.add(piecesTaken, board[toRow][toCol]);
 		}
 
 		//Add string to ArrayList of strings
@@ -161,22 +137,16 @@ public class ChessModel implements IChessModel {
 
 	}
 
-	public ImageIcon undoMove(){
-		//Blank image icon for return purposes
-		ImageIcon image = new ImageIcon();
-
+	public void undoMove(){
 		if (numMoves > 0) {
 			//Getting string representation of previous move
 			//Using num moves to ensure accurate index
 			String savedSpot = moveList.get(numMoves);
 
-			//Takes the char at 0, turns it into a string, parses it into an int
+			//Takes the char from 0-3, turns it into a string, parses it into an int
 			int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
-			//Takes the char at 1, turns it into a string, parses it into an int
 			int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
-			//Takes the char at 2, turns it into a string, parses it into an int
 			int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
-			//Takes the char at 3, turns it into a string, parses it into an int
 			int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
 
 			//Creates move object
@@ -185,20 +155,20 @@ public class ChessModel implements IChessModel {
 			//Makes move
 			move(m);
 
-			//If statement for ImageIcon
-			if (savedSpot.length() > 4)
-				//Uses substring to create ImageIcon
-				image = new ImageIcon(savedSpot.substring(4));
-
+			//If statement for setPiece
+			if (savedSpot.length() > 4) {
+                setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
+            }
 
 			//Removes element at desired index
 			moveList.remove(numMoves);
 
-			//Decrements numMoves to reflect the removal of the element at that index
+			//Decrements numMoves & piecesTaken to reflect the removal
+			// of the element at that index
 			numMoves--;
+			piecesTaken--;
 
 		}
-		return image;
     }
 
 

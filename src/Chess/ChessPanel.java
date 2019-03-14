@@ -245,9 +245,6 @@ public class ChessPanel extends JPanel {
                 }
             }
             if (undoBtn == event.getSource()) {
-//                if (model.pieceTaken(fromRow, fromCol, toRow, toCol)) {
-//                    board[model.getCloneOfTakenRow()][model.getCloneOfTakenCol()].setIcon(model.undoMove());
-//                }
                 model.undoMove();
                 displayBoard();
             }
