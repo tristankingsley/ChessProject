@@ -31,7 +31,10 @@ public class ChessPanel extends JPanel {
     private int toCol;
 
     private JLabel selected;
-    // declare other instance variables as needed
+    private JLabel turn;
+
+    private JButton reset;
+    // declare other intance variables as needed
 
     private listener listener;
 
@@ -71,9 +74,19 @@ public class ChessPanel extends JPanel {
             }
         }
         selected = new JLabel("Not selected");
+
+        turn = new JLabel(model.currentPlayer().toString());
+
+        reset = new JButton("Reset");
+
+        turn.setPreferredSize(new Dimension(100, 20));
         selected.setPreferredSize(new Dimension(100,20));
         add(boardpanel, BorderLayout.WEST);
         add(selected, BorderLayout.EAST);
+        add(turn,BorderLayout.EAST);
+        reset.addActionListener(listener);
+        reset.setPreferredSize(new Dimension(150, 40));
+        add(reset, BorderLayout.SOUTH);
         boardpanel.setPreferredSize(new Dimension(600, 600));
         add(buttonpanel);
         firstTurnFlag = true;
@@ -237,6 +250,8 @@ public class ChessPanel extends JPanel {
                                 //type before it disappears
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
+                                model.setNextPlayer();
+                                turn.setText(model.currentPlayer().toString());
                                 displayBoard();
                             }
                             selected.setText("Not selected");
@@ -244,10 +259,13 @@ public class ChessPanel extends JPanel {
                     }
                 }
             }
+            if(reset == event.getSource()){
+                model = new ChessModel();
+                displayBoard();
+            }
+
+
             if (undoBtn == event.getSource()) {
-//                if (model.pieceTaken(fromRow, fromCol, toRow, toCol)) {
-//                    board[model.getCloneOfTakenRow()][model.getCloneOfTakenCol()].setIcon(model.undoMove());
-//                }
                 model.undoMove();
                 displayBoard();
             }
