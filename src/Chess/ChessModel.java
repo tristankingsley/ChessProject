@@ -47,12 +47,12 @@ public class ChessModel implements IChessModel {
         board[7][6] = new Knight (Player.WHITE);
         board[7][7] = new Rook(Player.WHITE);
 
+		//Do we need this here I'm guessing?
+		player2 = Player.BLACK;
+
 		for(int i = 0; i < 8; i++) {
 			board[1][i] = new Pawn(Player.BLACK);
 		}
-
-		//Do we need this here I'm guessing?
-		player2 = Player.BLACK;
 
 		board[0][0] = new Rook(Player.BLACK);
 		board[0][1] = new Knight(Player.BLACK);
@@ -74,9 +74,10 @@ public class ChessModel implements IChessModel {
 	public boolean isValidMove(Move move) {
 		boolean valid = false;
 
-		if (board[move.fromRow][move.fromColumn] != null)
-			if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
-                return true;
+		if (board[move.fromRow][move.fromColumn].player() == currentPlayer())
+			if (board[move.fromRow][move.fromColumn] != null)
+				if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
+					return true;
 
 		return valid;
 	}
@@ -118,9 +119,6 @@ public class ChessModel implements IChessModel {
 
 		//Add string to ArrayList of strings
 		moveList.add(numMoves, saveSpot);
-
-		System.out.println(moveList);
-
 	}
 
 	public void undoMove(){
