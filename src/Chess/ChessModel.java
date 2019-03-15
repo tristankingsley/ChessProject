@@ -80,7 +80,7 @@ public class ChessModel implements IChessModel {
 				if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
 					return true;
 		} else {
-			JOptionPane.showMessageDialog(null, "Not your turn, Ed-boy...");
+			JOptionPane.showMessageDialog(null, currentPlayer().toString()+ "'S TURN");
 		}
 
 		return valid;
