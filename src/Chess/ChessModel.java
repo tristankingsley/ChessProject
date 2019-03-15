@@ -1,6 +1,7 @@
 package Chess;
 
 
+import javax.swing.*;
 import java.util.*;
 
 public class ChessModel implements IChessModel {	 
@@ -74,10 +75,13 @@ public class ChessModel implements IChessModel {
 	public boolean isValidMove(Move move) {
 		boolean valid = false;
 
-		if (board[move.fromRow][move.fromColumn].player() == currentPlayer())
+		if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
 			if (board[move.fromRow][move.fromColumn] != null)
 				if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
 					return true;
+		} else {
+			JOptionPane.showMessageDialog(null, "Not your turn, Ed-boy...");
+		}
 
 		return valid;
 	}
