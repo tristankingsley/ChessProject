@@ -15,6 +15,7 @@ public class ChessModel implements IChessModel {
 	private int numMoves = 0;
 	private int piecesTaken = 0;
 
+	//GAAAAAAAAHHHHHH
 
 	// declare other instance variables as needed
 
@@ -97,7 +98,6 @@ public class ChessModel implements IChessModel {
 	}
 
 	public void saveMove(int fromRow, int fromCol, int toRow, int toCol){
-		//Increment counter for locating moves in ArrayList.
 		//Incremented BEFORE saving to ensure FIRST moves saves in element
 		//ONE for simplicity.
 		numMoves++;
