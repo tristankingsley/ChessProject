@@ -2,6 +2,7 @@ package Chess;
 
 
 import javax.swing.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class ChessModel implements IChessModel {	 
@@ -75,8 +76,8 @@ public class ChessModel implements IChessModel {
 	public boolean isValidMove(Move move) {
 		boolean valid = false;
 
-		if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
-			if (board[move.fromRow][move.fromColumn] != null)
+		if (board[move.fromRow][move.fromColumn] != null)
+			if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
 				if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
 					return true;
 		} else {
@@ -91,7 +92,7 @@ public class ChessModel implements IChessModel {
 		board[move.fromRow][move.fromColumn] = null;
 	}
 
-	public boolean inCheck(Player p) {
+	public boolean inCheck(Player player) {
 		boolean valid = false;
 
 		int kingRow = 0;
@@ -100,10 +101,13 @@ public class ChessModel implements IChessModel {
 		// find the king
 		for (int row = 0; row < 8; row++) {
 			for (int col = 0; col < 8; col++) {
-				if (board[row][col].type().equals("King")
-						&& board[row][col].player() == p) {
+				if (board[row][col] != null &&
+						board[row][col].type().equals("King")
+						&& board[row][col].player() == currentPlayer()) {
 					kingRow = row;
 					kingCol = col;
+
+					System.out.println("" + row + col);
 				}
 			}
 		}
@@ -111,10 +115,11 @@ public class ChessModel implements IChessModel {
 		// traverse board for opposing pieces.
 		for (int r = 0; r < 8; r++) {
 			for (int c = 0; c < 8; c++) {
-				if (isValidMove(new Move(r,c,kingRow,kingCol))
-						&& board[r][c].player() != p) {
+				if (board[r][c] != null && board[r][c].player() != currentPlayer() &&
+						board[r][c].isValidMove(new Move(r,c,kingRow,kingCol),board)) {
+
+					System.out.println(board[r][c].type() + " " + board[r][c].player());
 					valid = true;
-					JOptionPane.showMessageDialog(null, p + " is in Check");
 				}
 			}
 		}
@@ -225,6 +230,51 @@ public class ChessModel implements IChessModel {
 		 *d. Move a piece (pawns first) forward toward opponent king 
 		 *		i. check to see if that piece is in danger of being removed, if so, move a different piece.
 		 */
+		ArrayList <IChessPiece> AIPieces = new ArrayList<>();
+		
+		int kingX = 0;
+		int kingY = 0;
+		
+		if(currentPlayer() == Player.BLACK) {
+			for (int i = 0; i < 8; i++)
+				for (int j = 0; j < 8; j++) {
+					if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[i][j].type().equals("King")) {
+						kingX = i;
+						kingY = j;
+					}
+				}
 
+			String[] kingPosMoves = new String[8];
+				int count = 0;
+
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					if (board[kingX][kingY].isValidMove(new Move(kingX, kingY, i, j), board)) {
+						kingPosMoves[count] = i + "" + j;
+						count++;
+					}
+				}
+			}
+
+
+				for(String s: kingPosMoves){
+
+					//Takes the char from 0-3, turns it into a string, parses it into an int
+					if(s != null) {
+						int tRow = Integer.parseInt(Character.toString(s.charAt(0)));
+						int tCol = Integer.parseInt(Character.toString(s.charAt(1)));
+
+						for (int i = 0; i < 8; i++) {
+							for (int j = 0; j < 8; j++)
+								if (board[i][j] != null && board[i][j].player() == Player.BLACK
+										&& board[i][j].isValidMove(new Move(i, j, tRow, tCol), board))
+									System.out.println(board[i][j].type());
+						}
+					}
+
+
+			}
 		}
+
+	}
 }

@@ -251,8 +251,12 @@ public class ChessPanel extends JPanel {
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
                                 model.setNextPlayer();
+                                System.out.print(model.currentPlayer().toString());
                                 turn.setText(model.currentPlayer().toString());
+                                model.AI();
                                 displayBoard();
+                                if(model.inCheck(model.currentPlayer()))
+                                    JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
                             }
                             selected.setText("Not selected");
                         }
