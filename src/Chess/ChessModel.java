@@ -15,8 +15,7 @@ public class ChessModel implements IChessModel {
 	private ArrayList<String> moveList;
 	private int numMoves = 0;
 	private int piecesTaken = 0;
-
-	//GAAAAAAAAHHHHHH
+	private GUIcodes gameStatus;
 
 	// declare other instance variables as needed
 
@@ -26,6 +25,9 @@ public class ChessModel implements IChessModel {
 
         //Creates List for taken pieces
 		takenPieces = new ArrayList<>();
+
+		//Sets GUIcodes to NoMessage
+		gameStatus = GUIcodes.NoMessage;
 
 		//Fills first element of both ArrayLists with blank
 		// string/object so that the very FIRST move/take piece
@@ -71,18 +73,23 @@ public class ChessModel implements IChessModel {
 	public boolean isComplete() {
 		boolean valid = false;
 
+		if (inCheck(currentPlayer()) && checkmate(currentPlayer())) {
+			valid = true;
+		}
+
 		return valid;
 	}
 
 	public boolean isValidMove(Move move) {
 		boolean valid = false;
 
-		if (board[move.fromRow][move.fromColumn] != null)
+		if (board[move.fromRow][move.fromColumn] != null) {
 			if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
 				if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
 					return true;
-		} else {
-			JOptionPane.showMessageDialog(null, currentPlayer().toString()+ "'S TURN");
+			} else {
+				JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
+			}
 		}
 
 		return valid;
@@ -122,6 +129,93 @@ public class ChessModel implements IChessModel {
 					System.out.println(board[r][c].type() + " " + board[r][c].player());
 					valid = true;
 				}
+			}
+		}
+
+		return valid;
+	}
+
+	public boolean checkmate(Player player){
+		boolean valid = false;
+
+
+		int kingRow = 0;
+		int kingCol = 0;
+
+		// find the king
+		for (int row = 0; row < 8; row++) {
+			for (int col = 0; col < 8; col++) {
+				if (board[row][col] != null &&
+						board[row][col].type().equals("King")
+						&& board[row][col].player() == currentPlayer()) {
+					kingRow = row;
+					kingCol = col;
+
+					System.out.println("" + row + col);
+				}
+			}
+		}
+
+		//Making sure we aren't in check
+		if (!inCheck(player)){
+			//Try block for king moving up one spot
+			try{
+				Move m = new Move(kingRow, kingCol, kingRow - 1, kingCol);
+				if (board[kingRow][kingCol].isValidMove(m, board)){
+					move(m);
+					if (inCheck(player)){
+						valid = true;
+					}
+				}
+			//Catches Index error, which is if moving up isnt valid (IChessPiece interface)
+			} catch (RuntimeException IndexOutOfBoundsException){
+				System.out.println("Can't Move Up!");
+				throw IndexOutOfBoundsException;
+			}
+
+			//Try block for king moving down one spot
+			try{
+				Move m = new Move(kingRow, kingCol, kingRow + 1, kingCol);
+				if (board[kingRow][kingCol].isValidMove(m, board)){
+					move(m);
+					if (inCheck(player)){
+						valid = true;
+					}
+				}
+				//Catches Index error, which is if moving down isnt valid (IChessPiece interface)
+			} catch (RuntimeException IndexOutOfBoundsException){
+				System.out.println("Can't Move Down!");
+				throw IndexOutOfBoundsException;
+			}
+
+			//Try block for king moving right one spot
+			try{
+				Move m = new Move(kingRow, kingCol, kingRow, kingCol + 1);
+				if (board[kingRow][kingCol].isValidMove(m, board)){
+					move(m);
+					if (inCheck(player)){
+						valid = true;
+					}
+				}
+				//Catches Index error, which is if moving right isnt valid (IChessPiece interface)
+			} catch (RuntimeException IndexOutOfBoundsException){
+				System.out.println("Can't Move Right!");
+				throw IndexOutOfBoundsException;
+			}
+
+			//Try block for king moving left one spot
+			try{
+				Move m = new Move(kingRow, kingCol, kingRow, kingCol - 1);
+				if (board[kingRow][kingCol].isValidMove(m, board)){
+					move(m);
+					if (inCheck(player)){
+						valid = true;
+					}
+				}
+				//Catches Index error, which is if moving left isnt valid (IChessPiece interface)
+			} catch (RuntimeException IndexOutOfBoundsException){
+				System.out.println("Can't Move left!");
+				throw IndexOutOfBoundsException;
 			}
 		}
 
