@@ -94,6 +94,32 @@ public class ChessModel implements IChessModel {
 
 	public boolean inCheck(Player p) {
 		boolean valid = false;
+
+		int kingRow = 0;
+		int kingCol = 0;
+
+		// find the king
+		for (int row = 0; row < 8; row++) {
+			for (int col = 0; col < 8; col++) {
+				if (board[row][col].type().equals("King")
+						&& board[row][col].player() == p) {
+					kingRow = row;
+					kingCol = col;
+				}
+			}
+		}
+
+		// traverse board for opposing pieces.
+		for (int r = 0; r < 8; r++) {
+			for (int c = 0; c < 8; c++) {
+				if (isValidMove(new Move(r,c,kingRow,kingCol))
+						&& board[r][c].player() != p) {
+					valid = true;
+					JOptionPane.showMessageDialog(null, p + " is in Check");
+				}
+			}
+		}
+
 		return valid;
 	}
 
