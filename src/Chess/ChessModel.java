@@ -108,7 +108,7 @@ public class ChessModel implements IChessModel {
 			}
 		}
 
-		// traverse board for opposing pieces
+		// traverse board for opposing pieces.
 		for (int r = 0; r < 8; r++) {
 			for (int c = 0; c < 8; c++) {
 				if (isValidMove(new Move(r,c,kingRow,kingCol))
