@@ -208,10 +208,10 @@ public class ChessModel implements IChessModel {
 			}
 		}
 
-		if (count > 8) {
+		if (count == 8) {
 			JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
 			valid = true;
-		} else{
+		} else if (count < 8){
 			JOptionPane.showMessageDialog(null, "King can survive.");
 		}
 
