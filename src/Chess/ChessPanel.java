@@ -273,6 +273,20 @@ public class ChessPanel extends JPanel {
                 model.undoMove();
                 displayBoard();
             }
+
+            if (model.isComplete()){
+                //Shows message saying who has won
+                JOptionPane.showMessageDialog(null,
+                        "Game Over!" + "\n" + model.currentPlayer()
+                                + "has won!");
+                //Shows messages to click reset button if wanting to play again
+                JOptionPane.showMessageDialog(null,
+                        "Please click the 'OKAY; button if you" +
+                                "\n would like to play again!");
+                //Resets board anyway :)
+                model = new ChessModel();
+                displayBoard();
+            }
         }
     }
 }

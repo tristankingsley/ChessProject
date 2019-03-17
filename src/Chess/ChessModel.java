@@ -137,6 +137,7 @@ public class ChessModel implements IChessModel {
 
 	public boolean checkmate(Player player){
 		boolean valid = false;
+		int count = 0;
 
 
 		int kingRow = 0;
@@ -151,72 +152,67 @@ public class ChessModel implements IChessModel {
 					kingRow = row;
 					kingCol = col;
 
-					System.out.println("" + row + col);
 				}
 			}
 		}
 
 		//Making sure we aren't in check
 		if (!inCheck(player)){
-			//Try block for king moving up one spot
-			try{
-				Move m = new Move(kingRow, kingCol, kingRow - 1, kingCol);
-				if (board[kingRow][kingCol].isValidMove(m, board)){
-					move(m);
-					if (inCheck(player)){
-						valid = true;
-					}
-				}
-			//Catches Index error, which is if moving up isnt valid (IChessPiece interface)
-			} catch (RuntimeException IndexOutOfBoundsException){
-				System.out.println("Can't Move Up!");
-				throw IndexOutOfBoundsException;
+			//Checks if each move is valid
+			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol))){
+				move(new Move(kingRow, kingCol, kingRow - 1, kingCol));
+				if (inCheck(player))
+					count++;
 			}
 
-			//Try block for king moving down one spot
-			try{
-				Move m = new Move(kingRow, kingCol, kingRow + 1, kingCol);
-				if (board[kingRow][kingCol].isValidMove(m, board)){
-					move(m);
-					if (inCheck(player)){
-						valid = true;
-					}
-				}
-				//Catches Index error, which is if moving down isnt valid (IChessPiece interface)
-			} catch (RuntimeException IndexOutOfBoundsException){
-				System.out.println("Can't Move Down!");
-				throw IndexOutOfBoundsException;
+			if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol))){
+				move(new Move(kingRow, kingCol, kingRow + 1, kingCol));
+				if (inCheck(player))
+					count++;
 			}
 
-			//Try block for king moving right one spot
-			try{
-				Move m = new Move(kingRow, kingCol, kingRow, kingCol + 1);
-				if (board[kingRow][kingCol].isValidMove(m, board)){
-					move(m);
-					if (inCheck(player)){
-						valid = true;
-					}
-				}
-				//Catches Index error, which is if moving right isnt valid (IChessPiece interface)
-			} catch (RuntimeException IndexOutOfBoundsException){
-				System.out.println("Can't Move Right!");
-				throw IndexOutOfBoundsException;
+			if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol - 1))){
+				move(new Move(kingRow, kingCol, kingRow, kingCol - 1));
+				if (inCheck(player))
+					count++;
 			}
 
-			//Try block for king moving left one spot
-			try{
-				Move m = new Move(kingRow, kingCol, kingRow, kingCol - 1);
-				if (board[kingRow][kingCol].isValidMove(m, board)){
-					move(m);
-					if (inCheck(player)){
-						valid = true;
-					}
-				}
-				//Catches Index error, which is if moving left isnt valid (IChessPiece interface)
-			} catch (RuntimeException IndexOutOfBoundsException){
-				System.out.println("Can't Move left!");
-				throw IndexOutOfBoundsException;
+			if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol + 1))){
+				move(new Move(kingRow, kingCol, kingRow, kingCol + 1));
+				if (inCheck(player))
+					count++;
 			}
+
+			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1))){
+				move(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1));
+				if (inCheck(player))
+					count++;
+			}
+
+			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))){
+				move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
+				if (inCheck(player))
+					count++;
+			}
+
+			if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1))){
+				move(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1));
+				if (inCheck(player))
+					count++;
+			}
+
+			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))){
+				move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
+				if (inCheck(player))
+					count++;
+			}
+		}
+
+		if (count > 8) {
+			JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
+			valid = true;
+		} else{
+			JOptionPane.showMessageDialog(null, "King can survive.");
 		}
 
 		return valid;
