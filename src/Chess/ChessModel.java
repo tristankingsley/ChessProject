@@ -137,7 +137,13 @@ public class ChessModel implements IChessModel {
 
 	public boolean checkmate(Player player){
 		boolean valid = false;
-		int count = 0;
+		int kingMoves = 0;
+		int enemyMoves = 0;
+		//Creates ArrayList for king moves and adds a counter
+		//so first move is saved at element one. Makes element zero null.
+		ArrayList<String> validMoves = new ArrayList<>();
+		int moveSpot = 1;
+		validMoves.add(0, null);
 
 
 		int kingRow = 0;
@@ -156,62 +162,41 @@ public class ChessModel implements IChessModel {
 			}
 		}
 
-		//Making sure we aren't in check
-		if (!inCheck(player)){
-			//Checks if each move is valid
-			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol))){
-				move(new Move(kingRow, kingCol, kingRow - 1, kingCol));
-				if (inCheck(player))
-					count++;
+		//Making sure we are in check
+		if (inCheck(player)){
+			//Checks for valid moves by the king from current spot, adds them to array
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					if (isValidMove(new Move(kingRow, kingCol, row, col))){
+						validMoves.add(moveSpot, "" + row + col);
+						moveSpot++;
+					}
+				}
+			}
+			//To reflect the number of valid moves available to king
+			//so that after we decrement in order to extract the moves
+			kingMoves = moveSpot - 1;
+
+			//Checks for valid moves from friends
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					int toRow = Integer.parseInt(Character.toString(validMoves.get(moveSpot - 1).charAt(0)));
+					int toCol = Integer.parseInt(Character.toString(validMoves.get(moveSpot - 1).charAt(1)));
+
+					if ( (isValidMove(new Move(row, col, toRow, toCol)) && board[row][col].player() != currentPlayer())
+							&& (!isValidMove(new Move(row, col, toRow, toCol)) && board[row][col].player() == currentPlayer())){
+						moveSpot--;
+						validMoves.remove(moveSpot);
+					}
+				}
 			}
 
-			if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol))){
-				move(new Move(kingRow, kingCol, kingRow + 1, kingCol));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol - 1))){
-				move(new Move(kingRow, kingCol, kingRow, kingCol - 1));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol + 1))){
-				move(new Move(kingRow, kingCol, kingRow, kingCol + 1));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1))){
-				move(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))){
-				move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1))){
-				move(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1));
-				if (inCheck(player))
-					count++;
-			}
-
-			if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))){
-				move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
-				if (inCheck(player))
-					count++;
-			}
 		}
-
-		if (count == 8) {
+		//Larger than 1 in case it is just the null value in there
+		if (validMoves.size() == 1) {
 			JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
 			valid = true;
-		} else if (count < 8){
+		} else if (validMoves.size() > 1){
 			JOptionPane.showMessageDialog(null, "King can survive.");
 		}
 

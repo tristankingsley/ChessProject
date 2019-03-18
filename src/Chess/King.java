@@ -16,8 +16,9 @@ public class King extends ChessPiece {
 			if ((Math.abs(move.toColumn - move.fromColumn)
 					+ Math.abs(move.toRow - move.fromRow) == 1) ||
 					(Math.abs(move.toColumn - move.fromColumn) == 1 &&
-							Math.abs(move.toRow - move.fromRow) == 1))
+							Math.abs(move.toRow - move.fromRow) == 1)) {
 				return true;
+			}
 		}
 
 		return false;
