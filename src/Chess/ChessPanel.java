@@ -9,6 +9,8 @@ public class ChessPanel extends JPanel {
     private JButton[][] board;
     private ChessModel model;
     private JButton undoBtn;
+    private JButton castleLeft;
+    private JButton castleRight;
 
     private ImageIcon wRook;
     private ImageIcon wBishop;
@@ -49,6 +51,9 @@ public class ChessPanel extends JPanel {
     public ChessPanel() {
         //Undo button
         undoBtn = new JButton("Undo Move");
+        //Castle buttons
+        castleLeft = new JButton("Try Castling Left");
+        castleRight = new JButton("Try Castling Right");
 
         model = new ChessModel();
         board = new JButton[model.numRows()][model.numColumns()];
@@ -81,7 +86,7 @@ public class ChessPanel extends JPanel {
 
         turn.setPreferredSize(new Dimension(100, 20));
         selected.setPreferredSize(new Dimension(100,20));
-        add(boardpanel, BorderLayout.WEST);
+        add(boardpanel, BorderLayout.NORTH);
         add(selected, BorderLayout.EAST);
         add(turn,BorderLayout.EAST);
         reset.addActionListener(listener);
@@ -95,6 +100,14 @@ public class ChessPanel extends JPanel {
         undoBtn.addActionListener(listener);
         undoBtn.setPreferredSize(new Dimension(150, 40));
         add(undoBtn, BorderLayout.SOUTH);
+
+        castleRight.addActionListener(listener);
+        castleRight.setPreferredSize(new Dimension(150, 40));
+        add(castleRight, BorderLayout.SOUTH);
+
+        castleLeft.addActionListener(listener);
+        castleLeft.setPreferredSize(new Dimension(150, 40));
+        add(castleLeft, BorderLayout.SOUTH);
     }
 
     private void setBackGroundColor(int r, int c) {
@@ -252,7 +265,7 @@ public class ChessPanel extends JPanel {
                                 model.move(m);
                                 model.setNextPlayer();
                                 turn.setText(model.currentPlayer().toString());
-                                model.AI();
+                                //model.AI();
                                 displayBoard();
                                 if(model.inCheck(model.currentPlayer()))
                                     JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
@@ -270,6 +283,16 @@ public class ChessPanel extends JPanel {
 
             if (undoBtn == event.getSource()) {
                 model.undoMove();
+                displayBoard();
+            }
+
+            if (castleRight == event.getSource()){
+                model.castleRight(model.currentPlayer());
+                displayBoard();
+            }
+
+            if (castleLeft == event.getSource()){
+                model.castleLeft(model.currentPlayer());
                 displayBoard();
             }
 

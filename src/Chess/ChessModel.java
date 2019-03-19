@@ -2,14 +2,13 @@ package Chess;
 
 
 import javax.swing.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class ChessModel implements IChessModel {
     private IChessPiece[][] board;
     //Temp IChessPiece to copy piece taken
     private ArrayList<IChessPiece> takenPieces;
-    private Player player;
+    private Player player1;
     //Do we need this here for the Player.BLACK?
     private Player player2;
     private ArrayList<String> moveList;
@@ -36,7 +35,7 @@ public class ChessModel implements IChessModel {
         moveList.add(numMoves, "");
 
         board = new IChessPiece[8][8];
-        player = Player.WHITE;
+        player1 = Player.WHITE;
 
 
         for (int i = 0; i < 8; i++)
@@ -279,8 +278,193 @@ public class ChessModel implements IChessModel {
     }
 
 
+    public boolean canCastleLeft(Player p){
+        //Creates boolean
+        boolean valid = false;
+        //Checks for being a black player1
+        if (p == player2){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Check if it is black king
+                if (board[0][4].type().equals("King") && board[0][4].player() == p) {
+                    //Checks to see if left-Rook is in spot and is black
+                    if (board[0][0].type().equals("Rook") && board[0][0].player() == p) {
+                        //check if spots between are null
+                        if (board[0][1] == null &&
+                                board[0][2] == null &&
+                                board[0][3] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        } else if (p == player1){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Check if it is white king
+                if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                    //Checks to see if left-Rook is in spot and is black
+                    if (board[7][0].type().equals("Rook") && board[7][7].player() == p) {
+                        //check if spots between are null
+                        if (board[7][1] == null &&
+                                board[7][2] == null &&
+                                board[7][3] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        }
+        return valid;
+    }
+
+    public void castleLeft(Player p){
+        //Checks for player
+        if (p == player2){
+            if (canCastleLeft(p)){
+                //Make copies and set pieces so currentPlayer() doesn't change
+                IChessPiece tempKing = board[0][4];
+                IChessPiece tempRook = board[0][0];
+                setPiece(0, 4, null);
+                setPiece(0, 0, null);
+                setPiece(0, 2, tempKing);
+                setPiece(0, 3, tempRook);
+                if (inCheck(p)){
+                    //If in check, moves pieces back to continue turn
+                    IChessPiece tempKing2 = board[0][2];
+                    IChessPiece tempRook2 = board[0][3];
+                    setPiece(0, 2, null);
+                    setPiece(0, 3, null);
+                    setPiece(0, 4, tempKing2);
+                    setPiece(0, 0, tempRook2);
+                } else{
+                    //Else statement is only for setting next player since no
+                    // actual move was made
+                    setNextPlayer();
+                }
+            }
+        }//Checks for player
+        else if (p == player1){
+            if (canCastleLeft(p)) {
+                //Make copies and set pieces so currentPlayer() doesn't change
+                IChessPiece tempKing = board[7][4];
+                IChessPiece tempRook = board[7][0];
+                setPiece(7, 4, null);
+                setPiece(7, 0, null);
+                setPiece(7, 2, tempKing);
+                setPiece(7, 3, tempRook);
+                //Checks to see if move put us into check
+                if (inCheck(p)) {
+                    //Reverses moves to allow for another option
+                    IChessPiece tempKing2 = board[7][2];
+                    IChessPiece tempRook2 = board[7][3];
+                    setPiece(7, 2, null);
+                    setPiece(7, 3, null);
+                    setPiece(7, 4, tempKing2);
+                    setPiece(7, 0, tempRook2);
+                } else {
+                    //Else covers not being in check, sets next player cause
+                    //no actual move was made
+                    setNextPlayer();
+                }
+            }
+        }
+    }
+
+    public boolean canCastleRight(Player p){
+        //Creates boolean
+        boolean valid = false;
+        //Checks for black player1
+        if (p == player2){
+            //Checks to make sue we are not in check
+            if (!inCheck(p)) {
+                //Checks if right-rook is in it's spot
+                if (board[0][7].type().equals("Rook") && board[0][7].player() == p) {
+                    //Checks location of king
+                    if (board[0][4].type().equals("King") && board[0][4].player() == p) {
+                        //check if spots between are null
+                        if (board[0][6] == null && board[0][5] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+            //check if it is white player1
+        } else if (p == player1){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Checks if right-rook is in it's spot
+                if (board[7][7].type().equals("Rook") && board[7][7].player() == p) {
+                    //Checks location of king
+                    if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                        //check if spots between are null
+                        if (board[7][6] == null && board[7][5] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        }
+        return valid;
+    }
+
+    public void castleRight(Player p){
+        //Checks for player
+        if (p == player2){
+            if (canCastleRight(p)){
+                //Make copies and set pieces so currentPlayer() doesn't change
+                IChessPiece tempKing = board[0][4];
+                IChessPiece tempRook = board[0][7];
+                setPiece(0, 4, null);
+                setPiece(0, 7, null);
+                setPiece(0, 6, tempKing);
+                setPiece(0, 5, tempRook);
+                setNextPlayer();
+                if (inCheck(p)){
+                    //If in check, moves pieces back to continue turn
+                    IChessPiece tempKing2 = board[0][6];
+                    IChessPiece tempRook2 = board[0][5];
+                    setPiece(0, 6, null);
+                    setPiece(0, 5, null);
+                    setPiece(0, 4, tempKing2);
+                    setPiece(0, 7, tempRook2);
+                } else{
+                    //Else statement is only for setting next player since no
+                    // actual move was made
+                    setNextPlayer();
+                }
+            }
+        }//Checks for player
+        else if (p == player1){
+            if (canCastleRight(p)){
+                //Make copies and set pieces so currentPlayer() doesn't change
+                IChessPiece tempKing = board[7][4];
+                IChessPiece tempRook = board[7][7];
+                setPiece(7, 4, null);
+                setPiece(7, 7, null);
+                setPiece(7, 6, tempKing);
+                setPiece(7, 5, tempRook);
+                setNextPlayer();
+                if (inCheck(p)){
+                    //If in check, moves pieces back to continue turn
+                    IChessPiece tempKing2 = board[7][6];
+                    IChessPiece tempRook2 = board[7][5];
+                    setPiece(7, 6, null);
+                    setPiece(7, 5, null);
+                    setPiece(7, 4, tempKing2);
+                    setPiece(7, 7, tempRook2);
+                } else{
+                    //Else statement is only for setting next player since no
+                    // actual move was made
+                    setNextPlayer();
+                }
+            }
+        }
+    }
+
+
     public Player currentPlayer() {
-        return player;
+        return player1;
     }
 
     public int numRows() {
@@ -296,7 +480,7 @@ public class ChessModel implements IChessModel {
     }
 
     public void setNextPlayer() {
-        player = player.next();
+        player1 = player1.next();
     }
 
     public void setPiece(int row, int column, IChessPiece piece) {
