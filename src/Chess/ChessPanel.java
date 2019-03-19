@@ -251,7 +251,6 @@ public class ChessPanel extends JPanel {
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
                                 model.setNextPlayer();
-                                System.out.print(model.currentPlayer().toString());
                                 turn.setText(model.currentPlayer().toString());
                                 model.AI();
                                 displayBoard();

@@ -10,6 +10,10 @@ public class Knight extends ChessPiece {
 		return "Knight";
 	}
 
+	public int getValue(){
+		return 3;
+	}
+
 	public boolean isValidMove(Move move, IChessPiece[][] board){
 
         // More code is needed
