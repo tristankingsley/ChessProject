@@ -20,12 +20,13 @@ public class Pawn extends ChessPiece {
 				direction = -1;
 
 			//Checks for empty spots since pawns can't capture by moving forward
-			if (move.fromColumn == move.toColumn && board[move.toRow][move.toColumn] == null) {
+			if (move.toRow != 0 && move.toRow != 7 && move.fromColumn == move.toColumn
+					&& board[move.toRow - direction][move.toColumn] == null) {
 				//checks to see if it's the pawns first move
 				if (move.fromRow == 1 || move.fromRow == 6) {
 					//can move one or 2 spaces in the right direction
-					if ((move.fromRow - move.toRow) == 2 * direction ||
-							((move.fromRow - move.toRow)) == direction)
+					if (((move.fromRow - move.toRow) == 2 * direction ||
+							((move.fromRow - move.toRow)) == direction) && board[move.toRow][move.toColumn] == null)
 						return true;
 
 				}
@@ -39,13 +40,13 @@ public class Pawn extends ChessPiece {
 					//towards the left
 					if (move.fromColumn != 7) {
 						if (board[move.fromRow - direction][move.fromColumn + 1] != null)
-							if (move.toRow == move.fromRow - direction && move.fromColumn != move.toColumn + 1)
+							if (move.toRow == move.fromRow - direction && move.fromColumn == move.toColumn - 1)
 								return true;}
 
 					//towards the right
 					if (move.fromColumn != 0)
 						if (board[move.fromRow - direction][move.fromColumn - 1] != null)
-							if (move.toRow == move.fromRow - direction && move.fromColumn != move.toColumn - 1)
+							if (move.toRow == move.fromRow - direction && move.fromColumn == move.toColumn + 1)
 								return true;
 				}
 
