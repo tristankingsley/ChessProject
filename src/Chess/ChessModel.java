@@ -274,6 +274,8 @@ public class ChessModel implements IChessModel {
 
             //Decrements numMoves to reflect the removal 0f the element at that index
             numMoves--;
+
+            setNextPlayer();
         }
     }
 
@@ -322,21 +324,16 @@ public class ChessModel implements IChessModel {
         //Checks for player
         if (p == player2){
             if (canCastleLeft(p)){
-                //Make copies and set pieces so currentPlayer() doesn't change
-                IChessPiece tempKing = board[0][4];
-                IChessPiece tempRook = board[0][0];
-                setPiece(0, 4, null);
-                setPiece(0, 0, null);
-                setPiece(0, 2, tempKing);
-                setPiece(0, 3, tempRook);
+                //Create move objects, move, save
+                Move m = new Move(0, 4, 0, 2);
+                Move m1 = new Move(0, 0, 0, 3);
+                move(m);
+                move(m1);
+                saveMove(0, 4, 0, 2);
+                saveMove(0, 0, 0, 3);
                 if (inCheck(p)){
-                    //If in check, moves pieces back to continue turn
-                    IChessPiece tempKing2 = board[0][2];
-                    IChessPiece tempRook2 = board[0][3];
-                    setPiece(0, 2, null);
-                    setPiece(0, 3, null);
-                    setPiece(0, 4, tempKing2);
-                    setPiece(0, 0, tempRook2);
+                    undoMove();
+                    undoMove();
                 } else{
                     //Else statement is only for setting next player since no
                     // actual move was made
@@ -346,22 +343,18 @@ public class ChessModel implements IChessModel {
         }//Checks for player
         else if (p == player1){
             if (canCastleLeft(p)) {
-                //Make copies and set pieces so currentPlayer() doesn't change
-                IChessPiece tempKing = board[7][4];
-                IChessPiece tempRook = board[7][0];
-                setPiece(7, 4, null);
-                setPiece(7, 0, null);
-                setPiece(7, 2, tempKing);
-                setPiece(7, 3, tempRook);
+                //Create move objects, move, save
+                Move m = new Move(7, 4, 7, 2);
+                Move m1 = new Move(7, 0, 7, 3);
+                move(m);
+                move(m1);
+                saveMove(7, 4, 7, 2);
+                saveMove(7, 0, 7, 3);
                 //Checks to see if move put us into check
                 if (inCheck(p)) {
                     //Reverses moves to allow for another option
-                    IChessPiece tempKing2 = board[7][2];
-                    IChessPiece tempRook2 = board[7][3];
-                    setPiece(7, 2, null);
-                    setPiece(7, 3, null);
-                    setPiece(7, 4, tempKing2);
-                    setPiece(7, 0, tempRook2);
+                    undoMove();
+                    undoMove();
                 } else {
                     //Else covers not being in check, sets next player cause
                     //no actual move was made
@@ -412,22 +405,17 @@ public class ChessModel implements IChessModel {
         //Checks for player
         if (p == player2){
             if (canCastleRight(p)){
-                //Make copies and set pieces so currentPlayer() doesn't change
-                IChessPiece tempKing = board[0][4];
-                IChessPiece tempRook = board[0][7];
-                setPiece(0, 4, null);
-                setPiece(0, 7, null);
-                setPiece(0, 6, tempKing);
-                setPiece(0, 5, tempRook);
-                setNextPlayer();
+                //Create move objects, move, save
+                Move m = new Move(0, 4, 0, 6);
+                Move m1 = new Move(0, 7, 0, 5);
+                move(m);
+                move(m1);
+                saveMove(0, 4, 0, 6);
+                saveMove(0, 7, 0, 5);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    IChessPiece tempKing2 = board[0][6];
-                    IChessPiece tempRook2 = board[0][5];
-                    setPiece(0, 6, null);
-                    setPiece(0, 5, null);
-                    setPiece(0, 4, tempKing2);
-                    setPiece(0, 7, tempRook2);
+                    undoMove();
+                    undoMove();
                 } else{
                     //Else statement is only for setting next player since no
                     // actual move was made
@@ -437,26 +425,17 @@ public class ChessModel implements IChessModel {
         }//Checks for player
         else if (p == player1){
             if (canCastleRight(p)){
-                //Make copies and set pieces so currentPlayer() doesn't change
-                IChessPiece tempKing = board[7][4];
-                IChessPiece tempRook = board[7][7];
-                setPiece(7, 4, null);
-                setPiece(7, 7, null);
-                setPiece(7, 6, tempKing);
-                setPiece(7, 5, tempRook);
-                setNextPlayer();
+                //Create move objects, move, save
+                Move m = new Move(7, 4, 7, 6);
+                Move m1 = new Move(7, 7, 7, 5);
+                move(m);
+                move(m1);
+                saveMove(7, 4, 7, 6);
+                saveMove(7, 7, 7, 5);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    IChessPiece tempKing2 = board[7][6];
-                    IChessPiece tempRook2 = board[7][5];
-                    setPiece(7, 6, null);
-                    setPiece(7, 5, null);
-                    setPiece(7, 4, tempKing2);
-                    setPiece(7, 7, tempRook2);
-                } else{
-                    //Else statement is only for setting next player since no
-                    // actual move was made
-                    setNextPlayer();
+                    undoMove();
+                    undoMove();
                 }
             }
         }
@@ -480,7 +459,7 @@ public class ChessModel implements IChessModel {
     }
 
     public void setNextPlayer() {
-        player1 = player1.next();
+       player1 = player1.next();
     }
 
     public void setPiece(int row, int column, IChessPiece piece) {
