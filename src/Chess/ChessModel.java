@@ -397,9 +397,10 @@ public class ChessModel implements IChessModel {
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
                         //black's coordinate
+                        for (int type = 0; type < 5; type++)
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++)
-                                for (int type = 0; type < 5; type++){
+                                {
                                 if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[k][l] != null
                                         && board[k][l].player() == Player.BLACK && board[k][l].type().equals(types[type])
                                         && board[i][j].isValidMove(new Move(i, j, k, l), board)
@@ -432,11 +433,11 @@ public class ChessModel implements IChessModel {
 
             //moves pieces safely
             if (!goneYet)
+                for (int type = 0; type < 5; type++)
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++)
-                                for (int type = 0; type < 5; type++)
                                     if (board[i][j] != null && board[i][j].player() == Player.BLACK
                                             && board[i][j].type().equals(types[4 - type])
                                             && board[i][j].isValidMove(new Move(i, j, k, l), board) && !goneYet && !inDanger) {
