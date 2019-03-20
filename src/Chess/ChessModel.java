@@ -441,6 +441,35 @@ public class ChessModel implements IChessModel {
         }
     }
 
+    public boolean canEnPassant(Player p) {
+        boolean valid = false;
+
+        String lastMove = moveList.get(numMoves);
+
+        //Takes the char from 0-3, turns it into a string, parses it into an int
+        int toRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
+        int toCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
+        int fromRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
+        int fromCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
+
+        // if move was two spaces
+        if (Math.abs(fromRow - toRow) == 2) {
+            // if piece moving is a pawn
+            if (board[fromRow][fromCol].type().equals("Pawn") && board[fromRow][fromCol].player() != p) {
+                // look for players pawn next to opposing pawn
+                for (int i = 1; i < 8; i++) {
+                    if (Math.abs(toCol - i) == 1) {
+                        if (board[toRow][i].type().equals("Pawn") && board[toRow][i].player() == p) {
+                            valid = true;
+                            JOptionPane.showMessageDialog(null, p + " can perform En Passant!");
+                        }
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
 
     public Player currentPlayer() {
         return player1;
