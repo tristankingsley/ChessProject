@@ -92,13 +92,13 @@ public class ChessModel implements IChessModel {
     }
 
     public void move(Move move) {
-        board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
-        board[move.fromRow][move.fromColumn] = null;
         //If statement for whiteRightRook, consider a void method with a move as a parameter
         if (board[move.fromRow][move.fromColumn].type().equals("Rook")
                 && (move.fromRow == 7 && move.fromColumn == 7)){
             whiteRightRook = false;
         }
+        board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
+        board[move.fromRow][move.fromColumn] = null;
         setNextPlayer();
     }
 
