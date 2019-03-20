@@ -280,6 +280,10 @@ public class ChessPanel extends JPanel {
                                 model.setNextPlayer();
                                 turn.setText(model.currentPlayer().toString());
                                 model.AI();
+                                if(model.pawnInEndzone()){
+                                    model.pawnTransform("Queen");
+                                }
+
                                 model.setNextPlayer();
                                 displayBoard();
                                 if(model.inCheck(model.currentPlayer()))
