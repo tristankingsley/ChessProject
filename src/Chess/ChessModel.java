@@ -14,7 +14,7 @@ public class ChessModel implements IChessModel {
     private ArrayList<String> moveList;
     private int numMoves = 0;
     private int piecesTaken = 0;
-    private GUIcodes gameStatus;
+    private boolean whiteRightRook = true;
 
     // declare other instance variables as needed
 
@@ -24,9 +24,6 @@ public class ChessModel implements IChessModel {
 
         //Creates List for taken pieces
         takenPieces = new ArrayList<>();
-
-        //Sets GUIcodes to NoMessage
-        gameStatus = GUIcodes.NoMessage;
 
         //Fills first element of both ArrayLists with blank
         // string/object so that the very FIRST move/take piece
@@ -85,18 +82,22 @@ public class ChessModel implements IChessModel {
         if (board[move.fromRow][move.fromColumn] != null) {
             if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
                 if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
-                    return true;
+                    valid = true;
             } else {
                 JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
             }
         }
-
         return valid;
     }
 
     public void move(Move move) {
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
+        //If statement for whiteRightRook, consider a void method with a move as a parameter
+        if (board[move.fromRow][move.fromColumn].type().equals("Rook")
+                && (move.fromRow == 7 && move.fromColumn == 7)){
+            whiteRightRook = false;
+        }
         setNextPlayer();
     }
 
@@ -211,10 +212,7 @@ public class ChessModel implements IChessModel {
         if (count == 8) {
             JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
             valid = true;
-        } //else if (count < 8) {
-        //JOptionPane.showMessageDialog(null, "King can survive.");
-        //}
-
+        }
         return valid;
     }
 
@@ -260,6 +258,11 @@ public class ChessModel implements IChessModel {
 
             //Creates move object
             Move m = new Move(fromRow, fromCol, toRow, toCol);
+
+            //If statement for whiteRightRook boolean
+            if (board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)){
+                whiteRightRook = true;
+            }
 
             //Makes move
             move(m);
@@ -418,7 +421,7 @@ public class ChessModel implements IChessModel {
             }
         }//Checks for player
         else if (p == player1){
-            if (canCastleRight(p)){
+            if (canCastleRight(p) && whiteRightRook == true){
                 //Create move objects, move, save
                 Move m = new Move(7, 4, 7, 5);
                 Move m1 = new Move(7, 5, 7, 6);

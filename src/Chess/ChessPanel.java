@@ -295,7 +295,6 @@ public class ChessPanel extends JPanel {
                 } else if (model.canCastleRight(model.currentPlayer())) {
                     model.castleRight(model.currentPlayer());
                 }
-                model.setNextPlayer();
                 displayBoard();
             }
 
@@ -303,16 +302,6 @@ public class ChessPanel extends JPanel {
                 model.undoCastle();
                 displayBoard();
             }
-
-//            if (castleRight == event.getSource()){
-//                model.castleRight(model.currentPlayer());
-//                displayBoard();
-//            }
-//
-//            if (castleLeft == event.getSource()){
-//                model.castleLeft(model.currentPlayer());
-//                displayBoard();
-//            }
 
             if (model.isComplete()){
                 //Shows message saying who has won
