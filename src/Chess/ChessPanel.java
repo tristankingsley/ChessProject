@@ -263,9 +263,24 @@ public class ChessPanel extends JPanel {
                                 //type before it disappears
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
+
+                                if(model.pawnInEndzone()){
+                                    String[] options = {"Queen", "Bishop", "Rook", "Knight"};
+                                    int type = JOptionPane.showOptionDialog(null,
+                                            "What do you want your pawn to transform into?",
+                                            "Pawn transformation", JOptionPane.YES_NO_CANCEL_OPTION,
+                                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+                                    model.pawnTransform(options[type]);
+
+                                }
+
+
+
                                 model.setNextPlayer();
                                 turn.setText(model.currentPlayer().toString());
                                 model.AI();
+                                model.setNextPlayer();
                                 displayBoard();
                                 if(model.inCheck(model.currentPlayer()))
                                     JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
@@ -304,6 +319,8 @@ public class ChessPanel extends JPanel {
             }
 
             if (model.isComplete()){
+
+                model.setNextPlayer();
                 //Shows message saying who has won
                 JOptionPane.showMessageDialog(null,
                         "Game Over!" + "\n" + model.currentPlayer()

@@ -101,6 +101,35 @@ public class ChessModel implements IChessModel {
         board[move.fromRow][move.fromColumn] = null;
     }
 
+    public boolean pawnInEndzone(){
+        String check = moveList.get(numMoves);
+        int pieceRow = Integer.parseInt(Character.toString(check.charAt(2)));
+        int pieceCol = Integer.parseInt(Character.toString(check.charAt(3)));
+
+        if((pieceRow == 7 || pieceRow == 0) && board[pieceRow][pieceCol]!= null
+                && board[pieceRow][pieceCol].type().equals("Pawn"))
+            return true;
+
+        return false;
+    }
+
+    public void pawnTransform(String type){
+        String check = moveList.get(numMoves);
+
+        int pieceRow = Integer.parseInt(Character.toString(check.charAt(2)));
+        int pieceCol = Integer.parseInt(Character.toString(check.charAt(3)));
+
+        if(type.equals("Queen"))
+            setPiece(pieceRow,pieceCol, new Queen(currentPlayer()));
+        else if(type.equals("Rook"))
+            setPiece(pieceRow,pieceCol, new Rook(currentPlayer()));
+        else if(type.equals("Bishop"))
+            setPiece(pieceRow,pieceCol, new Bishop(currentPlayer()));
+        else if(type.equals("Knight"))
+            setPiece(pieceRow,pieceCol, new Knight(currentPlayer()));
+    }
+
+
     public boolean inCheck(Player player) {
         boolean valid = false;
 
@@ -125,8 +154,6 @@ public class ChessModel implements IChessModel {
             for (int c = 0; c < 8; c++) {
                 if (board[r][c] != null && board[r][c].player() != currentPlayer() &&
                         board[r][c].isValidMove(new Move(r, c, kingRow, kingCol), board)) {
-
-                    System.out.println(board[r][c].type() + " " + board[r][c].player());
                     valid = true;
                 }
             }
@@ -516,8 +543,8 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-                if(!goneYet)
-                    System.out.println("I didn't need to move out of check");
+//                if(!goneYet)
+//                    System.out.println("I didn't need to move out of check");
             }
 
             // tries to put white in check
@@ -556,8 +583,8 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-            if(!goneYet)
-                System.out.println("I couldn't put white in check");
+//            if(!goneYet)
+//                System.out.println("I couldn't put white in check");
 
             //in danger
             if (!goneYet)
@@ -601,8 +628,8 @@ public class ChessModel implements IChessModel {
                                     }
                                 }
                 }
-            if(!goneYet)
-                System.out.println("I didn't need to move a piece out of danger");
+//            if(!goneYet)
+//                System.out.println("I didn't need to move a piece out of danger");
 
             //moves pieces safely
             if (!goneYet)
@@ -634,14 +661,13 @@ public class ChessModel implements IChessModel {
                                                 inDanger = false;
                                             }
 
-                                            if(!goneYet)
-                                                System.out.println("I couldn't place a random piece.");
+                                            //if(!goneYet)
+                                               // System.out.println("I couldn't place a random piece.");
 
 
                                     }
                 }
 
         }
-        setNextPlayer();
     }
 }
