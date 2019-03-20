@@ -99,7 +99,8 @@ public class ChessModel implements IChessModel {
         }
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
-        setNextPlayer();
+
+        System.out.println(currentPlayer().toString() + "\n" + moveList);
     }
 
     public boolean inCheck(Player player) {
@@ -117,7 +118,6 @@ public class ChessModel implements IChessModel {
                     kingRow = row;
                     kingCol = col;
 
-                    System.out.println("" + row + col);
                 }
             }
         }
@@ -280,7 +280,6 @@ public class ChessModel implements IChessModel {
             //Decrements numMoves to reflect the removal 0f the element at that index
             numMoves--;
         }
-        setNextPlayer();
     }
 
 
@@ -538,7 +537,7 @@ public class ChessModel implements IChessModel {
 
             //keeps black out of check
             if (inCheck(Player.BLACK)) {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++) {
@@ -553,6 +552,9 @@ public class ChessModel implements IChessModel {
                                     }
                                 }
                             }
+                }
+                if(!goneYet)
+                    System.out.println("I didn't need to move out of check");
             }
 
             // tries to put white in check
@@ -591,6 +593,8 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
+            if(!goneYet)
+                System.out.println("I couldn't put white in check");
 
             //in danger
             if (!goneYet)
@@ -634,6 +638,8 @@ public class ChessModel implements IChessModel {
                                     }
                                 }
                 }
+            if(!goneYet)
+                System.out.println("I didn't need to move a piece out of danger");
 
             //moves pieces safely
             if (!goneYet)
@@ -665,9 +671,13 @@ public class ChessModel implements IChessModel {
                                                 inDanger = false;
                                             }
 
+                                            if(!goneYet)
+                                                System.out.println("I couldn't place a random piece.");
+
 
                                     }
                 }
+
         }
         setNextPlayer();
     }
