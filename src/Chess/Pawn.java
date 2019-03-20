@@ -20,13 +20,14 @@ public class Pawn extends ChessPiece {
 				direction = -1;
 
 			//Checks for empty spots since pawns can't capture by moving forward
-			if (move.toRow != 0 && move.toRow != 7 && move.fromColumn == move.toColumn
-					&& board[move.toRow - direction][move.toColumn] == null) {
+			if (move.fromRow != 0 && move.fromRow != 7 && move.fromColumn == move.toColumn
+					&& board[move.fromRow - direction][move.fromColumn] == null) {
 				//checks to see if it's the pawns first move
 				if (move.fromRow == 1 || move.fromRow == 6) {
 					//can move one or 2 spaces in the right direction
-					if (((move.fromRow - move.toRow) == 2 * direction ||
-							((move.fromRow - move.toRow)) == direction) && board[move.toRow][move.toColumn] == null)
+					if ((move.fromRow - move.toRow) == 2 * direction && board[move.toRow][move.toColumn] == null)
+						return true;
+					if((move.fromRow - move.toRow) == direction && board[move.toRow][move.toColumn] == null)
 						return true;
 
 				}

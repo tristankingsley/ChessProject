@@ -265,7 +265,7 @@ public class ChessPanel extends JPanel {
                                 model.move(m);
                                 model.setNextPlayer();
                                 turn.setText(model.currentPlayer().toString());
-                                //model.AI();
+                                model.AI();
                                 displayBoard();
                                 if(model.inCheck(model.currentPlayer()))
                                     JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
@@ -286,15 +286,15 @@ public class ChessPanel extends JPanel {
                 displayBoard();
             }
 
-            if (castleRight == event.getSource()){
-                model.castleRight(model.currentPlayer());
-                displayBoard();
-            }
-
-            if (castleLeft == event.getSource()){
-                model.castleLeft(model.currentPlayer());
-                displayBoard();
-            }
+//            if (castleRight == event.getSource()){
+//                model.castleRight(model.currentPlayer());
+//                displayBoard();
+//            }
+//
+//            if (castleLeft == event.getSource()){
+//                model.castleLeft(model.currentPlayer());
+//                displayBoard();
+//            }
 
             if (model.isComplete()){
                 //Shows message saying who has won
