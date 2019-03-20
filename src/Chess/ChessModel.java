@@ -93,14 +93,12 @@ public class ChessModel implements IChessModel {
 
     public void move(Move move) {
         //If statement for whiteRightRook, consider a void method with a move as a parameter
-        if (board[move.fromRow][move.fromColumn].type().equals("Rook")
+        if (board[move.fromRow][move.fromColumn]!= null &&  board[move.fromRow][move.fromColumn].type().equals("Rook")
                 && (move.fromRow == 7 && move.fromColumn == 7)){
             whiteRightRook = false;
         }
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
-
-        System.out.println(currentPlayer().toString() + "\n" + moveList);
     }
 
     public boolean inCheck(Player player) {
@@ -138,83 +136,47 @@ public class ChessModel implements IChessModel {
     }
 
     public boolean checkmate(Player player) {
-        boolean valid = false;
         int count = 0;
 
+        boolean stillInCheck = true;
 
-        int kingRow = 0;
-        int kingCol = 0;
+        for (int row = 0; row < 8; row++)
+            for (int col = 0; col < 8; col++)
+                if (board[row][col] != null && board[row][col].player() == currentPlayer())
+                    count++;
 
-        // find the king
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (board[row][col] != null &&
-                        board[row][col].type().equals("King")
-                        && board[row][col].player() == currentPlayer()) {
-                    kingRow = row;
-                    kingCol = col;
 
+        for (int row = 0; row < 8; row++)
+            for (int col = 0; col < 8; col++)
+                if ((board[row][col] != null && board[row][col].player() == currentPlayer() && stillInCheck)
+                        || count == 0) {
+                    for (int atrow = 0; atrow < 8; atrow++) {
+                        for (int atcol = 0; atcol < 8; atcol++) {
+                            if(board[row][col] != null
+                                    && board[row][col].isValidMove(new Move(row, col, atrow, atcol),board)){
+                                saveMove(row, col, atrow, atcol);
+                                move(new Move(row, col, atrow, atcol));
+
+
+                            if (inCheck(currentPlayer()))
+                                undoMove();
+
+                            else {
+                                stillInCheck = false;
+                                undoMove();
+
+                            }
+
+                        }
+                        }
+
+                    }
+                    if (inCheck(currentPlayer()))
+                        count--;
                 }
-            }
-        }
 
-        //Making sure we aren't in check
-        if (!inCheck(player)) {
-            //Checks if each move is valid
-            if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol))) {
-                move(new Move(kingRow, kingCol, kingRow - 1, kingCol));
-                if (inCheck(player))
-                    count++;
-            }
 
-            if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol))) {
-                move(new Move(kingRow, kingCol, kingRow + 1, kingCol));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol - 1))) {
-                move(new Move(kingRow, kingCol, kingRow, kingCol - 1));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow, kingCol + 1))) {
-                move(new Move(kingRow, kingCol, kingRow, kingCol + 1));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1))) {
-                move(new Move(kingRow, kingCol, kingRow - 1, kingCol - 1));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))) {
-                move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1))) {
-                move(new Move(kingRow, kingCol, kingRow + 1, kingCol - 1));
-                if (inCheck(player))
-                    count++;
-            }
-
-            if (isValidMove(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1))) {
-                move(new Move(kingRow, kingCol, kingRow - 1, kingCol + 1));
-                if (inCheck(player))
-                    count++;
-            }
-        }
-
-        if (count == 8) {
-            JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
-            valid = true;
-        }
-        return valid;
+                    return(count == 0);
     }
 
     public void saveMove(int fromRow, int fromCol, int toRow, int toCol) {
@@ -245,7 +207,7 @@ public class ChessModel implements IChessModel {
         moveList.add(numMoves, saveSpot);
     }
 
-    public void undoMove() {
+    public void undoMove(){
         if (numMoves > 0) {
             //Getting string representation of previous move
             //Using num moves to ensure accurate index
@@ -261,7 +223,8 @@ public class ChessModel implements IChessModel {
             Move m = new Move(fromRow, fromCol, toRow, toCol);
 
             //If statement for whiteRightRook boolean
-            if (board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)){
+            if (board[fromRow][fromCol] != null &&
+                    board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)){
                 whiteRightRook = true;
             }
 
