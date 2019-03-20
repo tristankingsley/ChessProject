@@ -97,6 +97,7 @@ public class ChessModel implements IChessModel {
     public void move(Move move) {
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
+        setNextPlayer();
     }
 
     public boolean inCheck(Player player) {
@@ -274,9 +275,8 @@ public class ChessModel implements IChessModel {
 
             //Decrements numMoves to reflect the removal 0f the element at that index
             numMoves--;
-
-            setNextPlayer();
         }
+        setNextPlayer();
     }
 
 
@@ -288,9 +288,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Check if it is black king
-                if (board[0][4].type().equals("King") && board[0][4].player() == p) {
+                if (board[0][4] != null && board[0][4].player() == p) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[0][0].type().equals("Rook") && board[0][0].player() == p) {
+                    if (board[0][0] != null && board[0][0].player() == p) {
                         //check if spots between are null
                         if (board[0][1] == null &&
                                 board[0][2] == null &&
@@ -306,7 +306,7 @@ public class ChessModel implements IChessModel {
                 //Check if it is white king
                 if (board[7][4].type().equals("King") && board[7][4].player() == p) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[7][0].type().equals("Rook") && board[7][7].player() == p) {
+                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p) {
                         //check if spots between are null
                         if (board[7][1] == null &&
                                 board[7][2] == null &&
@@ -325,40 +325,36 @@ public class ChessModel implements IChessModel {
         if (p == player2){
             if (canCastleLeft(p)){
                 //Create move objects, move, save
-                Move m = new Move(0, 4, 0, 2);
-                Move m1 = new Move(0, 0, 0, 3);
+                Move m = new Move(0, 4, 0, 3);
+                Move m1 = new Move(0, 3, 0, 2);
+                Move m2 = new Move(0, 0, 0, 3);
+                saveMove(0, 4, 0, 3);
+                saveMove(0, 3, 0, 2);
+                saveMove(0, 0, 0, 3);
                 move(m);
                 move(m1);
-                saveMove(0, 4, 0, 2);
-                saveMove(0, 0, 0, 3);
+                move(m2);
                 if (inCheck(p)){
-                    undoMove();
-                    undoMove();
-                } else{
-                    //Else statement is only for setting next player since no
-                    // actual move was made
-                    setNextPlayer();
+                    undoCastle();
                 }
             }
         }//Checks for player
         else if (p == player1){
             if (canCastleLeft(p)) {
                 //Create move objects, move, save
-                Move m = new Move(7, 4, 7, 2);
-                Move m1 = new Move(7, 0, 7, 3);
+                Move m = new Move(7, 4, 7, 3);
+                Move m1 = new Move(7, 3, 7, 2);
+                Move m2 = new Move(7, 0, 7, 3);
+                saveMove(7, 4, 7, 3);
+                saveMove(7, 3, 7, 2);
+                saveMove(7, 0, 7, 3);
                 move(m);
                 move(m1);
-                saveMove(7, 4, 7, 2);
-                saveMove(7, 0, 7, 3);
+                move(m2);
                 //Checks to see if move put us into check
                 if (inCheck(p)) {
                     //Reverses moves to allow for another option
-                    undoMove();
-                    undoMove();
-                } else {
-                    //Else covers not being in check, sets next player cause
-                    //no actual move was made
-                    setNextPlayer();
+                    undoCastle();
                 }
             }
         }
@@ -367,7 +363,7 @@ public class ChessModel implements IChessModel {
     public boolean canCastleRight(Player p){
         //Creates boolean
         boolean valid = false;
-        //Checks for black player1
+        //Checks for black player2
         if (p == player2){
             //Checks to make sue we are not in check
             if (!inCheck(p)) {
@@ -406,39 +402,46 @@ public class ChessModel implements IChessModel {
         if (p == player2){
             if (canCastleRight(p)){
                 //Create move objects, move, save
-                Move m = new Move(0, 4, 0, 6);
-                Move m1 = new Move(0, 7, 0, 5);
+                Move m = new Move(0, 4, 0, 5);
+                Move m1 = new Move(0, 5, 0, 6);
+                Move m2 = new Move(0, 7, 0, 5);
+                saveMove(0, 4, 0, 5);
+                saveMove(0, 5, 0, 6);
+                saveMove(0, 7, 0, 5);
                 move(m);
                 move(m1);
-                saveMove(0, 4, 0, 6);
-                saveMove(0, 7, 0, 5);
+                move(m2);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    undoMove();
-                    undoMove();
-                } else{
-                    //Else statement is only for setting next player since no
-                    // actual move was made
-                    setNextPlayer();
+                    undoCastle();
                 }
             }
         }//Checks for player
         else if (p == player1){
             if (canCastleRight(p)){
                 //Create move objects, move, save
-                Move m = new Move(7, 4, 7, 6);
-                Move m1 = new Move(7, 7, 7, 5);
+                Move m = new Move(7, 4, 7, 5);
+                Move m1 = new Move(7, 5, 7, 6);
+                Move m2 = new Move(7, 7, 7, 5);
+                saveMove(7, 4, 7, 5);
+                saveMove(7, 5, 7, 6);
+                saveMove(7, 7, 7, 5);
                 move(m);
                 move(m1);
-                saveMove(7, 4, 7, 6);
-                saveMove(7, 7, 7, 5);
+                move(m2);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    undoMove();
-                    undoMove();
+                    undoCastle();
                 }
             }
         }
+    }
+
+
+    public void undoCastle(){
+        undoMove();
+        undoMove();
+        undoMove();
     }
 
     public boolean canEnPassant(Player p) {
