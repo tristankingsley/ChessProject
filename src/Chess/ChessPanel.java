@@ -9,8 +9,8 @@ public class ChessPanel extends JPanel {
     private JButton[][] board;
     private ChessModel model;
     private JButton undoBtn;
-    private JButton castleLeft;
-    private JButton castleRight;
+    private JButton castle;
+    private JButton undoCastle;
 
     private ImageIcon wRook;
     private ImageIcon wBishop;
@@ -52,8 +52,8 @@ public class ChessPanel extends JPanel {
         //Undo button
         undoBtn = new JButton("Undo Move");
         //Castle buttons
-        castleLeft = new JButton("Try Castling Left");
-        castleRight = new JButton("Try Castling Right");
+        castle = new JButton("Castle");
+        undoCastle = new JButton("Undo Castle");
 
         model = new ChessModel();
         board = new JButton[model.numRows()][model.numColumns()];
@@ -101,13 +101,13 @@ public class ChessPanel extends JPanel {
         undoBtn.setPreferredSize(new Dimension(150, 40));
         add(undoBtn, BorderLayout.SOUTH);
 
-        castleRight.addActionListener(listener);
-        castleRight.setPreferredSize(new Dimension(150, 40));
-        add(castleRight, BorderLayout.SOUTH);
+        undoCastle.addActionListener(listener);
+        undoCastle.setPreferredSize(new Dimension(150, 40));
+        add(undoCastle, BorderLayout.SOUTH);
 
-        castleLeft.addActionListener(listener);
-        castleLeft.setPreferredSize(new Dimension(150, 40));
-        add(castleLeft, BorderLayout.SOUTH);
+        castle.addActionListener(listener);
+        castle.setPreferredSize(new Dimension(150, 40));
+        add(castle, BorderLayout.SOUTH);
     }
 
     private void setBackGroundColor(int r, int c) {
@@ -286,15 +286,22 @@ public class ChessPanel extends JPanel {
                 displayBoard();
             }
 
-//            if (castleRight == event.getSource()){
-//                model.castleRight(model.currentPlayer());
-//                displayBoard();
-//            }
-//
-//            if (castleLeft == event.getSource()){
-//                model.castleLeft(model.currentPlayer());
-//                displayBoard();
-//            }
+            if (castle == event.getSource()){
+                if (model.canCastleRight(model.currentPlayer())
+                        && model.canCastleLeft(model.currentPlayer())){
+                    model.castleRight(model.currentPlayer());
+                } else if (model.canCastleLeft(model.currentPlayer())) {
+                    model.castleLeft(model.currentPlayer());
+                } else if (model.canCastleRight(model.currentPlayer())) {
+                    model.castleRight(model.currentPlayer());
+                }
+                displayBoard();
+            }
+
+            if (undoCastle == event.getSource()){
+                model.undoCastle();
+                displayBoard();
+            }
 
             if (model.isComplete()){
                 //Shows message saying who has won

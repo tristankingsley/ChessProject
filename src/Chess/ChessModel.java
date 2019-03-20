@@ -9,13 +9,13 @@ public class ChessModel implements IChessModel {
     private IChessPiece[][] board;
     //Temp IChessPiece to copy piece taken
     private ArrayList<IChessPiece> takenPieces;
-    private Player player;
+    private Player player1;
     //Do we need this here for the Player.BLACK?
     private Player player2;
     private ArrayList<String> moveList;
     private int numMoves = 0;
     private int piecesTaken = 0;
-    private GUIcodes gameStatus;
+    private boolean whiteRightRook = true;
 
     // declare other instance variables as needed
 
@@ -26,9 +26,6 @@ public class ChessModel implements IChessModel {
         //Creates List for taken pieces
         takenPieces = new ArrayList<>();
 
-        //Sets GUIcodes to NoMessage
-        gameStatus = GUIcodes.NoMessage;
-
         //Fills first element of both ArrayLists with blank
         // string/object so that the very FIRST move/take piece
         // will line up with index ONE.
@@ -36,7 +33,7 @@ public class ChessModel implements IChessModel {
         moveList.add(numMoves, "");
 
         board = new IChessPiece[8][8];
-        player = Player.WHITE;
+        player1 = Player.WHITE;
 
 
         for (int i = 0; i < 8; i++)
@@ -51,7 +48,6 @@ public class ChessModel implements IChessModel {
         board[7][5] = new Bishop(Player.WHITE);
         board[7][6] = new Knight(Player.WHITE);
         board[7][7] = new Rook(Player.WHITE);
-
 
         //Do we need this here I'm guessing?
         player2 = Player.BLACK;
@@ -87,18 +83,23 @@ public class ChessModel implements IChessModel {
         if (board[move.fromRow][move.fromColumn] != null) {
             if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
                 if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
-                    return true;
+                    valid = true;
             } else {
                 JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
             }
         }
-
         return valid;
     }
 
     public void move(Move move) {
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
+        //If statement for whiteRightRook, consider a void method with a move as a parameter
+        if (board[move.fromRow][move.fromColumn].type().equals("Rook")
+                && (move.fromRow == 7 && move.fromColumn == 7)){
+            whiteRightRook = false;
+        }
+        setNextPlayer();
     }
 
     public boolean inCheck(Player player) {
@@ -212,10 +213,7 @@ public class ChessModel implements IChessModel {
         if (count == 8) {
             JOptionPane.showMessageDialog(null, "Game over. King cannot escape check.");
             valid = true;
-        } //else if (count < 8) {
-        //JOptionPane.showMessageDialog(null, "King can survive.");
-        //}
-
+        }
         return valid;
     }
 
@@ -262,6 +260,11 @@ public class ChessModel implements IChessModel {
             //Creates move object
             Move m = new Move(fromRow, fromCol, toRow, toCol);
 
+            //If statement for whiteRightRook boolean
+            if (board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)){
+                whiteRightRook = true;
+            }
+
             //Makes move
             move(m);
 
@@ -276,13 +279,207 @@ public class ChessModel implements IChessModel {
 
             //Decrements numMoves to reflect the removal 0f the element at that index
             numMoves--;
+        }
+        setNextPlayer();
+    }
 
+
+    public boolean canCastleLeft(Player p){
+        //Creates boolean
+        boolean valid = false;
+        //Checks for being a black player1
+        if (p == player2){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Check if it is black king
+                if (board[0][4] != null && board[0][4].player() == p) {
+                    //Checks to see if left-Rook is in spot and is black
+                    if (board[0][0] != null && board[0][0].player() == p) {
+                        //check if spots between are null
+                        if (board[0][1] == null &&
+                                board[0][2] == null &&
+                                board[0][3] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        } else if (p == player1){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Check if it is white king
+                if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                    //Checks to see if left-Rook is in spot and is black
+                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p) {
+                        //check if spots between are null
+                        if (board[7][1] == null &&
+                                board[7][2] == null &&
+                                board[7][3] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        }
+        return valid;
+    }
+
+    public void castleLeft(Player p){
+        //Checks for player
+        if (p == player2){
+            if (canCastleLeft(p)){
+                //Create move objects, move, save
+                Move m = new Move(0, 4, 0, 3);
+                Move m1 = new Move(0, 3, 0, 2);
+                Move m2 = new Move(0, 0, 0, 3);
+                saveMove(0, 4, 0, 3);
+                saveMove(0, 3, 0, 2);
+                saveMove(0, 0, 0, 3);
+                move(m);
+                move(m1);
+                move(m2);
+                if (inCheck(p)){
+                    undoCastle();
+                }
+            }
+        }//Checks for player
+        else if (p == player1){
+            if (canCastleLeft(p)) {
+                //Create move objects, move, save
+                Move m = new Move(7, 4, 7, 3);
+                Move m1 = new Move(7, 3, 7, 2);
+                Move m2 = new Move(7, 0, 7, 3);
+                saveMove(7, 4, 7, 3);
+                saveMove(7, 3, 7, 2);
+                saveMove(7, 0, 7, 3);
+                move(m);
+                move(m1);
+                move(m2);
+                //Checks to see if move put us into check
+                if (inCheck(p)) {
+                    //Reverses moves to allow for another option
+                    undoCastle();
+                }
+            }
+        }
+    }
+
+    public boolean canCastleRight(Player p){
+        //Creates boolean
+        boolean valid = false;
+        //Checks for black player2
+        if (p == player2){
+            //Checks to make sue we are not in check
+            if (!inCheck(p)) {
+                //Checks if right-rook is in it's spot
+                if (board[0][7].type().equals("Rook") && board[0][7].player() == p) {
+                    //Checks location of king
+                    if (board[0][4].type().equals("King") && board[0][4].player() == p) {
+                        //check if spots between are null
+                        if (board[0][6] == null && board[0][5] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+            //check if it is white player1
+        } else if (p == player1){
+            //Checks to make sure we are not in check
+            if (!inCheck(p)) {
+                //Checks if right-rook is in it's spot
+                if (board[7][7].type().equals("Rook") && board[7][7].player() == p) {
+                    //Checks location of king
+                    if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                        //check if spots between are null
+                        if (board[7][6] == null && board[7][5] == null) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+        }
+        return valid;
+    }
+
+    public void castleRight(Player p){
+        //Checks for player
+        if (p == player2){
+            if (canCastleRight(p)){
+                //Create move objects, move, save
+                Move m = new Move(0, 4, 0, 5);
+                Move m1 = new Move(0, 5, 0, 6);
+                Move m2 = new Move(0, 7, 0, 5);
+                saveMove(0, 4, 0, 5);
+                saveMove(0, 5, 0, 6);
+                saveMove(0, 7, 0, 5);
+                move(m);
+                move(m1);
+                move(m2);
+                if (inCheck(p)){
+                    //If in check, moves pieces back to continue turn
+                    undoCastle();
+                }
+            }
+        }//Checks for player
+        else if (p == player1){
+            if (canCastleRight(p) && whiteRightRook == true){
+                //Create move objects, move, save
+                Move m = new Move(7, 4, 7, 5);
+                Move m1 = new Move(7, 5, 7, 6);
+                Move m2 = new Move(7, 7, 7, 5);
+                saveMove(7, 4, 7, 5);
+                saveMove(7, 5, 7, 6);
+                saveMove(7, 7, 7, 5);
+                move(m);
+                move(m1);
+                move(m2);
+                if (inCheck(p)){
+                    //If in check, moves pieces back to continue turn
+                    undoCastle();
+                }
+            }
         }
     }
 
 
+    public void undoCastle(){
+        undoMove();
+        undoMove();
+        undoMove();
+    }
+
+    public boolean canEnPassant(Player p) {
+        boolean valid = false;
+
+        String lastMove = moveList.get(numMoves);
+
+        //Takes the char from 0-3, turns it into a string, parses it into an int
+        int toRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
+        int toCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
+        int fromRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
+        int fromCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
+
+        // if move was two spaces
+        if (Math.abs(fromRow - toRow) == 2) {
+            // if piece moving is a pawn
+            if (board[fromRow][fromCol].type().equals("Pawn") && board[fromRow][fromCol].player() != p) {
+                // look for players pawn next to opposing pawn
+                for (int i = 1; i < 8; i++) {
+                    if (Math.abs(toCol - i) == 1) {
+                        if (board[toRow][i].type().equals("Pawn") && board[toRow][i].player() == p) {
+                            valid = true;
+                            JOptionPane.showMessageDialog(null, p + " can perform En Passant!");
+                        }
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
     public Player currentPlayer() {
-        return player;
+        return player1;
     }
 
     public int numRows() {
@@ -298,7 +495,7 @@ public class ChessModel implements IChessModel {
     }
 
     public void setNextPlayer() {
-        player = player.next();
+       player1 = player1.next();
     }
 
     public void setPiece(int row, int column, IChessPiece piece) {
@@ -462,11 +659,11 @@ public class ChessModel implements IChessModel {
                                                 }
                                         }
 
-                                        if (inDanger) {
-                                            undoMove();
-                                            goneYet = false;
-                                            inDanger = false;
-                                        }
+                                            if (inDanger) {
+                                                undoMove();
+                                                goneYet = false;
+                                                inDanger = false;
+                                            }
 
 
                                     }
