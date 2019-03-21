@@ -11,6 +11,8 @@ public class ChessPanel extends JPanel {
     private JButton undoBtn;
     private JButton castle;
     private JButton undoCastle;
+    private JToggleButton AI;
+    private JToggleButton twoPlayer;
 
     private ImageIcon wRook;
     private ImageIcon wBishop;
@@ -49,11 +51,16 @@ public class ChessPanel extends JPanel {
     }
 
     public ChessPanel() {
+
+        AI = new JToggleButton("VS AI");
+        twoPlayer = new JToggleButton("VS PLAYER");
+
         //Undo button
         undoBtn = new JButton("Undo Move");
         //Castle buttons
         castle = new JButton("Castle");
         undoCastle = new JButton("Undo Castle");
+
 
         model = new ChessModel();
         board = new JButton[model.numRows()][model.numColumns()];
@@ -78,36 +85,67 @@ public class ChessPanel extends JPanel {
                 boardpanel.add(board[r][c]);
             }
         }
+
+        ButtonGroup playerOptions = new ButtonGroup();
+
+        playerOptions.add(AI);
+        playerOptions.add(twoPlayer);
+
         selected = new JLabel("Not selected");
 
-        turn = new JLabel(model.currentPlayer().toString());
+        turn = new JLabel(model.currentPlayer().toString() + "'S TURN");
 
         reset = new JButton("Reset");
 
         turn.setPreferredSize(new Dimension(100, 20));
         selected.setPreferredSize(new Dimension(100,20));
-        add(boardpanel, BorderLayout.NORTH);
-        add(selected, BorderLayout.EAST);
-        add(turn,BorderLayout.EAST);
+
+        buttonpanel.setLayout(new GridBagLayout());
+        GridBagConstraints position = new GridBagConstraints();
+        position.insets = new Insets(10, 0, 10, 0);
+
+        position.gridy = 0;
+        buttonpanel.add(selected, position);
+
+        position.gridy = 1;
+        buttonpanel.add(turn,position);
+
         reset.addActionListener(listener);
         reset.setPreferredSize(new Dimension(150, 40));
-        add(reset, BorderLayout.SOUTH);
+
+        position.gridy = 2;
+        buttonpanel.add(reset, position);
         boardpanel.setPreferredSize(new Dimension(600, 600));
-        add(buttonpanel);
-        firstTurnFlag = true;
 
         //Adds actionlistener, sets size, adds to BorderLayout
+        position.gridy = 3;
         undoBtn.addActionListener(listener);
         undoBtn.setPreferredSize(new Dimension(150, 40));
-        add(undoBtn, BorderLayout.SOUTH);
+        buttonpanel.add(undoBtn, position);
 
+        position.gridy = 4;
         undoCastle.addActionListener(listener);
         undoCastle.setPreferredSize(new Dimension(150, 40));
-        add(undoCastle, BorderLayout.SOUTH);
+        buttonpanel.add(undoCastle, position);
 
+        position.gridy = 5;
         castle.addActionListener(listener);
         castle.setPreferredSize(new Dimension(150, 40));
-        add(castle, BorderLayout.SOUTH);
+        buttonpanel.add(castle, position);
+
+        position.gridy = 6;
+        buttonpanel.add(AI, position);
+        AI.setSelected(true);
+
+        position.insets = new Insets(0, 0, 0, 0);
+        position.gridy = 7;
+        buttonpanel.add(twoPlayer, position);
+
+        buttonpanel.setPreferredSize(new Dimension(150, 700));
+
+        add(boardpanel, BorderLayout.WEST);
+        add(buttonpanel, BorderLayout.EAST);
+        firstTurnFlag = true;
     }
 
     private void setBackGroundColor(int r, int c) {
@@ -253,6 +291,8 @@ public class ChessPanel extends JPanel {
                             else
                                 selected.setText("Selected Empty");
                         } else {
+
+                            turn.setText(model.currentPlayer().toString() + "'S TURN");
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
@@ -275,21 +315,41 @@ public class ChessPanel extends JPanel {
 
                                 }
 
-
-
                                 model.setNextPlayer();
-                                turn.setText(model.currentPlayer().toString());
-                                model.AI();
-                                if(model.pawnInEndzone()){
-                                    model.pawnTransform("Queen");
+
+                                if(AI.isSelected()) {
+                                    model.AI();
+
+                                    if (model.pawnInEndzone()) {
+                                        model.pawnTransform("Queen");
+                                    }
+
+                                    if (model.isComplete()) {
+
+                                        model.setNextPlayer();
+                                        //Shows message saying who has won
+                                        JOptionPane.showMessageDialog(null,
+                                                "Game Over!" + "\n" + model.currentPlayer()
+                                                        + "has won!");
+                                        //Shows messages to click reset button if wanting to play again
+                                        JOptionPane.showMessageDialog(null,
+                                                "Please click the 'OKAY; button if you" +
+                                                        "\n would like to play again!");
+                                        //Resets board anyway :)
+                                        model = new ChessModel();
+                                    }
+                                    model.setNextPlayer();
                                 }
+                                else {
 
-                                model.setNextPlayer();
-                                displayBoard();
-                                if(model.inCheck(model.currentPlayer()))
-                                    JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
-                            }
+                                    turn.setText(model.currentPlayer().toString() + "'S TURN");
+
+                                    if (model.inCheck(model.currentPlayer()))
+                                        JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
+
+                                }
                             selected.setText("Not selected");
+                                displayBoard();
                         }
                     }
                 }
@@ -339,4 +399,4 @@ public class ChessPanel extends JPanel {
             }
         }
     }
-}
+}}

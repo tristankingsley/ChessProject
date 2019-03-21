@@ -203,7 +203,7 @@ public class ChessModel implements IChessModel {
                 }
 
 
-                    return(count == 0);
+                    return(count <= 0);
     }
 
     public void saveMove(int fromRow, int fromCol, int toRow, int toCol) {
