@@ -163,20 +163,10 @@ public class ChessModel implements IChessModel {
     }
 
     public boolean checkmate(Player player) {
-        int count = 0;
-
-        boolean stillInCheck = true;
 
         for (int row = 0; row < 8; row++)
             for (int col = 0; col < 8; col++)
-                if (board[row][col] != null && board[row][col].player() == currentPlayer())
-                    count++;
-
-
-        for (int row = 0; row < 8; row++)
-            for (int col = 0; col < 8; col++)
-                if ((board[row][col] != null && board[row][col].player() == currentPlayer() && stillInCheck)
-                        || count == 0) {
+                if ((board[row][col] != null && board[row][col].player() == currentPlayer())) {
                     for (int atrow = 0; atrow < 8; atrow++) {
                         for (int atcol = 0; atcol < 8; atcol++) {
                             if(board[row][col] != null
@@ -185,25 +175,21 @@ public class ChessModel implements IChessModel {
                                 move(new Move(row, col, atrow, atcol));
 
 
-                            if (inCheck(currentPlayer()))
+                            if (!inCheck(currentPlayer())){
                                 undoMove();
-
-                            else {
-                                stillInCheck = false;
-                                undoMove();
-
+                                return false;
                             }
+                            else
+                                undoMove();
 
                         }
                         }
 
                     }
-                    if (inCheck(currentPlayer()))
-                        count--;
                 }
 
 
-                    return(count <= 0);
+                    return true;
     }
 
     public void saveMove(int fromRow, int fromCol, int toRow, int toCol) {

@@ -317,6 +317,9 @@ public class ChessPanel extends JPanel {
 
                                 model.setNextPlayer();
 
+                                if (model.inCheck(model.currentPlayer()))
+                                    JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
+
                                 if(AI.isSelected()) {
                                     model.AI();
 
@@ -338,14 +341,16 @@ public class ChessPanel extends JPanel {
                                         //Resets board anyway :)
                                         model = new ChessModel();
                                     }
-                                    model.setNextPlayer();
-                                }
+                                    else {
+                                        model.setNextPlayer();
+
+                                        if (model.inCheck(model.currentPlayer()))
+                                            JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
+                                    }
+                                    }
                                 else {
 
                                     turn.setText(model.currentPlayer().toString() + "'S TURN");
-
-                                    if (model.inCheck(model.currentPlayer()))
-                                        JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
 
                                 }
                             selected.setText("Not selected");
@@ -382,7 +387,7 @@ public class ChessPanel extends JPanel {
                 displayBoard();
             }
 
-            if (model.isComplete()){
+            if (!AI.isSelected() && model.isComplete()){
 
                 model.setNextPlayer();
                 //Shows message saying who has won
