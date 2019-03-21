@@ -304,7 +304,7 @@ public class ChessPanel extends JPanel {
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
                                 model.move(m);
 
-                                if(model.pawnInEndzone()){
+                                if (model.pawnInEndzone()) {
                                     String[] options = {"Queen", "Bishop", "Rook", "Knight"};
                                     int type = JOptionPane.showOptionDialog(null,
                                             "What do you want your pawn to transform into?",
@@ -320,7 +320,7 @@ public class ChessPanel extends JPanel {
                                 if (model.inCheck(model.currentPlayer()))
                                     JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
 
-                                if(AI.isSelected()) {
+                                if (AI.isSelected()) {
                                     model.AI();
 
                                     if (model.pawnInEndzone()) {
@@ -340,21 +340,20 @@ public class ChessPanel extends JPanel {
                                                         "\n would like to play again!");
                                         //Resets board anyway :)
                                         model = new ChessModel();
-                                    }
-                                    else {
+                                    } else {
                                         model.setNextPlayer();
 
                                         if (model.inCheck(model.currentPlayer()))
                                             JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
                                     }
-                                    }
-                                else {
+                                } else {
 
                                     turn.setText(model.currentPlayer().toString() + "'S TURN");
 
                                 }
-                            selected.setText("Not selected");
+                                selected.setText("Not selected");
                                 displayBoard();
+                            }
                         }
                     }
                 }
@@ -404,4 +403,4 @@ public class ChessPanel extends JPanel {
             }
         }
     }
-}}
+}
