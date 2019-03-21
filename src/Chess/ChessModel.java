@@ -82,7 +82,12 @@ public class ChessModel implements IChessModel {
 
         if (board[move.fromRow][move.fromColumn] != null) {
             if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
-                if (board[move.fromRow][move.fromColumn].isValidMove(move, board) || canEnPassant(currentPlayer(), move))
+                    if(board[move.fromRow][move.fromColumn] != null)
+                        if((board[move.fromRow][move.fromColumn].isValidMove(move, board)))
+                        //|| canEnPassant(currentPlayer(), move))
+                            if ( putsPlayerInCheck(move))
+
+
                     valid = true;
             } else {
                 JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
@@ -90,6 +95,20 @@ public class ChessModel implements IChessModel {
         }
         return valid;
     }
+
+    public boolean putsPlayerInCheck(Move move){
+        boolean valid = true;
+        saveMove(move.fromRow, move.fromColumn, move.toRow, move.toColumn);
+        move(move);
+
+        if(inCheck(currentPlayer()))
+            valid = false;
+
+        undoMove();
+
+        return valid;
+    }
+
 
     public void move(Move move) {
         //If statement for whiteRightRook, consider a void method with a move as a parameter
@@ -424,35 +443,37 @@ public class ChessModel implements IChessModel {
     }
 
     public boolean canEnPassant(Player p, Move move) {
-        boolean valid = false;
 
-        String lastMove = moveList.get(numMoves);
+        if(numMoves != 0) {
+            String lastMove = moveList.get(numMoves);
 
-        int direction = 1; //direction for white
+            int direction = 1; //direction for white
 
-        if (board[move.fromRow][move.fromColumn].player() == Player.BLACK) //direction for black
-            direction = -1;
+            if (board[move.fromRow][move.fromColumn] != null &&
+                    board[move.fromRow][move.fromColumn].player() == Player.BLACK) //direction for black
+                direction = -1;
 
 
-        //Takes the char from 0-3, turns it into a string, parses it into an int
-        int pawnFromRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
-        int pawnFromCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
-        int pawnToRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
-        int pawnToCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
+            //Takes the char from 0-3, turns it into a string, parses it into an int
+            int pawnFromRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
+            int pawnFromCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
+            int pawnToRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
+            int pawnToCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
 
-        // if move was two spaces
-        if (Math.abs(pawnFromRow - pawnToRow) == 2) {
-            // if piece moving is a pawn
-            if (board[pawnToRow][pawnToCol] != null && board[pawnToRow][pawnToCol].type().equals("Pawn")
-                    && board[pawnToRow][pawnToCol].player() != p) {
-               if(move.fromRow == pawnToRow &&
-                       move.toRow + direction == pawnToRow && move.toColumn == pawnToCol) {
+            // if move was two spaces
+            if (Math.abs(pawnFromRow - pawnToRow) == 2) {
+                // if piece moving is a pawn
+                if (board[pawnToRow][pawnToCol] != null && board[pawnToRow][pawnToCol].type().equals("Pawn")
+                        && board[pawnToRow][pawnToCol].player() != p) {
+                    if (move.fromRow == pawnToRow &&
+                            move.toRow + direction == pawnToRow && move.toColumn == pawnToCol) {
 
-                   setPiece(pawnToRow,pawnFromCol,null);
-                   return true;
+                        setPiece(pawnToRow, pawnFromCol, null);
+                        return true;
 
-               }
+                    }
 
+                }
             }
         }
         return false;
