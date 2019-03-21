@@ -82,7 +82,7 @@ public class ChessModel implements IChessModel {
 
         if (board[move.fromRow][move.fromColumn] != null) {
             if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
-                if (board[move.fromRow][move.fromColumn].isValidMove(move, board))
+                if (board[move.fromRow][move.fromColumn].isValidMove(move, board) || canEnPassant(currentPlayer(), move))
                     valid = true;
             } else {
                 JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
@@ -423,34 +423,39 @@ public class ChessModel implements IChessModel {
         undoMove();
     }
 
-    public boolean canEnPassant(Player p) {
+    public boolean canEnPassant(Player p, Move move) {
         boolean valid = false;
 
         String lastMove = moveList.get(numMoves);
 
+        int direction = 1; //direction for white
+
+        if (board[move.fromRow][move.fromColumn].player() == Player.BLACK) //direction for black
+            direction = -1;
+
+
         //Takes the char from 0-3, turns it into a string, parses it into an int
-        int toRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
-        int toCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
-        int fromRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
-        int fromCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
+        int pawnFromRow = Integer.parseInt(Character.toString(lastMove.charAt(0)));
+        int pawnFromCol = Integer.parseInt(Character.toString(lastMove.charAt(1)));
+        int pawnToRow = Integer.parseInt(Character.toString(lastMove.charAt(2)));
+        int pawnToCol = Integer.parseInt(Character.toString(lastMove.charAt(3)));
 
         // if move was two spaces
-        if (Math.abs(fromRow - toRow) == 2) {
+        if (Math.abs(pawnFromRow - pawnToRow) == 2) {
             // if piece moving is a pawn
-            if (board[fromRow][fromCol].type().equals("Pawn") && board[fromRow][fromCol].player() != p) {
-                // look for players pawn next to opposing pawn
-                for (int i = 1; i < 8; i++) {
-                    if (Math.abs(toCol - i) == 1) {
-                        if (board[toRow][i].type().equals("Pawn") && board[toRow][i].player() == p) {
-                            valid = true;
-                            JOptionPane.showMessageDialog(null, p + " can perform En Passant!");
-                        }
-                    }
-                }
+            if (board[pawnToRow][pawnToCol] != null && board[pawnToRow][pawnToCol].type().equals("Pawn")
+                    && board[pawnToRow][pawnToCol].player() != p) {
+               if(move.fromRow == pawnToRow &&
+                       move.toRow + direction == pawnToRow && move.toColumn == pawnToCol) {
+
+                   setPiece(pawnToRow,pawnFromCol,null);
+                   return true;
+
+               }
+
             }
         }
-
-        return valid;
+        return false;
     }
 
     public Player currentPlayer() {
@@ -496,21 +501,32 @@ public class ChessModel implements IChessModel {
          */
         ArrayList<IChessPiece> AIPieces = new ArrayList<>();
 
-        int kingX = 0;
-        int kingY = 0;
+        int bKingX = 0;
+        int bKingY = 0;
+        int wKingX = 0;
+        int wKingY = 0;
+
         boolean goneYet = false;
         boolean inDanger = false;
+
         String[] types = {"Queen", "Bishop", "Rook", "Knight", "Pawn"};
 
         if (currentPlayer() == Player.BLACK) {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++) {
                     if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[i][j].type().equals("King")) {
-                        kingX = i;
-                        kingY = j;
+                        wKingX = i;
+                        wKingY = j;
                     }
                 }
 
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++) {
+                    if (board[i][j] != null && board[i][j].player() == Player.BLACK && board[i][j].type().equals("King")) {
+                        bKingX = i;
+                        bKingY = j;
+                    }
+                }
             //keeps black out of check
             if (inCheck(Player.BLACK)) {
                 for (int i = 0; i < 8; i++) {
@@ -529,16 +545,19 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-                if(goneYet)
+                if (goneYet)
                     System.out.println("I got out of check");
             }
 
             // tries to put white in check
-            if (!goneYet)
+            if (!goneYet){
+                //Black coordinates
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
+                        //Attempted space
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++) {
+                                //if the piece belongs to black, the move is valid and I haven't gone yet
                                 if (board[i][j] != null && board[i][j].player() == Player.BLACK
                                         && board[i][j].isValidMove(new Move(i, j, k, l), board)
                                         && !goneYet) {
@@ -548,9 +567,8 @@ public class ChessModel implements IChessModel {
 
                                     if (board[k][l] != null &&
                                             board[k][l].player() == Player.BLACK
-                                            && !board[k][l].isValidMove(new Move(k, l, kingX, kingY), board)) {
+                                            && !board[k][l].isValidMove(new Move(k, l, wKingX, wKingY), board)) {
                                         inDanger = true;
-                                        goneYet = false;
                                     }
 
                                     for (int m = 0; m < 8; m++) {
@@ -569,18 +587,19 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-            if(goneYet)
+            if (goneYet)
                 System.out.println("I put white in check");
+        }
 
             //in danger
-            if (!goneYet)
+            if (!goneYet) {
                 for (int type = 0; type < 5; type++)
-                //white's coordinate
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++)
-                        //black's coordinate
-                        for (int k = 0; k < 8; k++)
-                            for (int l = 0; l < 8; l++) {
+                    //white's coordinate
+                    for (int i = 0; i < 8; i++) {
+                        for (int j = 0; j < 8; j++)
+                            //black's coordinate
+                            for (int k = 0; k < 8; k++)
+                                for (int l = 0; l < 8; l++) {
                                     if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[k][l] != null
                                             && board[k][l].player() == Player.BLACK && board[k][l].type().equals(types[type])
                                             && board[i][j].isValidMove(new Move(i, j, k, l), board)
@@ -588,7 +607,7 @@ public class ChessModel implements IChessModel {
                                         for (int m = 0; m < 8; m++)
                                             for (int n = 0; n < 8; n++)
                                                 if (board[k][l] != null && board[k][l].isValidMove(new Move(k, l, m, n), board)
-                                                        && board[k][l].type().equals(types[type])&& !inDanger) {
+                                                        && board[k][l].type().equals(types[type]) && !inDanger) {
 
                                                     saveMove(k, l, m, n);
                                                     move(new Move(k, l, m, n));
@@ -602,7 +621,7 @@ public class ChessModel implements IChessModel {
                                                                 inDanger = true;
                                                             }
                                                     }
-                                                    if(inCheck(Player.BLACK))
+                                                    if (inCheck(Player.BLACK))
                                                         inDanger = true;
 
                                                     if (inDanger) {
@@ -613,9 +632,10 @@ public class ChessModel implements IChessModel {
                                                 }
                                     }
                                 }
-                }
-            if(goneYet)
-                System.out.println("I moved a piece out of danger");
+                    }
+                if (goneYet)
+                    System.out.println("I moved a piece out of danger");
+            }
 
             //moves pieces safely
             if (!goneYet){
@@ -650,12 +670,12 @@ public class ChessModel implements IChessModel {
 
                                 }
                 }
+                System.out.println("I moved a random piece");
             }
 
             if(!goneYet)
                 System.out.println("I couldn't place a random piece.");
-            else
-                System.out.println("I moved a random piece");
+
 
 
             System.out.println("---------------------------------------------------");
