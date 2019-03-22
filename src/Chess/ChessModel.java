@@ -127,8 +127,9 @@ public class ChessModel implements IChessModel {
         int pieceCol = Integer.parseInt(Character.toString(check.charAt(3)));
 
         if((pieceRow == 7 || pieceRow == 0) && board[pieceRow][pieceCol]!= null
-                && board[pieceRow][pieceCol].type().equals("Pawn"))
+                && board[pieceRow][pieceCol].type().equals("Pawn")) {
             return true;
+        }
 
         return false;
     }
@@ -236,7 +237,10 @@ public class ChessModel implements IChessModel {
             takenPieces.add(piecesTaken, board[toRow][toCol]);
         }
 
-
+//        if((toRow == 7 || toRow == 0) && board[fromRow][fromCol]!= null
+//                && board[fromRow][fromCol].type().equals("Pawn")) {
+//            saveSpot += "@";
+//        }
 
         //Add string to ArrayList of strings
         moveList.add(numMoves, saveSpot);
@@ -265,7 +269,9 @@ public class ChessModel implements IChessModel {
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
                 //Makes move
                 move(m);
-                //Removes the 3rd castle move
+                //Checks for first move boolean reset
+                resetFirstMoveBoolean(m);
+                //Removes the 1st castle move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
                 numMoves--;
@@ -280,6 +286,8 @@ public class ChessModel implements IChessModel {
                 Move m2 = new Move(fromRow, fromCol, toRow, toCol);
                 //Makes move
                 move(m2);
+                //Checks for first move boolean reset
+                resetFirstMoveBoolean(m2);
                 //Removes the "2nd" castle move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
@@ -289,9 +297,31 @@ public class ChessModel implements IChessModel {
                         board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)) {
                     whiteRightRook = true;
                 }
-                return;
-            }
-            if (!savedSpot.substring(4).equals("Endzone")) {
+            } //If statement for pawn transformation
+            else if (savedSpot.length() > 4 && savedSpot.charAt(4) == '@'){
+                //Removes the signal "0000" move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+                //Creates move object
+                Move m = new Move(fromRow, fromCol, toRow, toCol);
+                //Makes move
+                move(m);
+                //Sets pawn
+                setPiece(fromRow, fromCol, new Pawn(currentPlayer()));
+                //Removes the pawn transformation move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+            } //Else covers everything else
+            else {
 
                 //Takes the char from 0-3, turns it into a string, parses it into an int
                 int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
@@ -516,37 +546,43 @@ public class ChessModel implements IChessModel {
 
     public void setFirstMoveBoolean(Move m){
         //If statement for whiteRightRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.fromRow == 7 && m.fromColumn == 7)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteRightRook = false;
         }
         //If statement for whiteKing
-        if (board[m.fromRow][m.fromColumn].type().equals("King")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.fromRow == 7 && m.fromColumn == 4)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteKing = false;
         }
         //If statement for whiteLeftRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.fromRow == 7 && m.fromColumn == 0)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteLeftRook = false;
         }
         //If statement for blackRightRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.fromRow == 0 && m.fromColumn == 7)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackRightRook = false;
         }
         //If statement for blackKing
-        if (board[m.fromRow][m.fromColumn].type().equals("King")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.fromRow == 0 && m.fromColumn == 4)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackKing = false;
         }
         //If statement for blackLeftRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.fromRow == 0 && m.fromColumn == 0)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackLeftRook = false;
@@ -556,37 +592,43 @@ public class ChessModel implements IChessModel {
 
     public void resetFirstMoveBoolean(Move m){
         //If statement for whiteRightRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
             && (m.toRow == 7 && m.toColumn == 7)
             && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteRightRook = true;
         }
         //If statement for whiteKing
-        if (board[m.fromRow][m.fromColumn].type().equals("King")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.toRow == 7 && m.toColumn == 4)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteKing = true;
         }
         //If statement for whiteLeftRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.toRow == 7 && m.toColumn == 0)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteLeftRook = true;
         }
         //If statement for blackRightRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.toRow == 0 && m.toColumn == 7)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackRightRook = true;
         }
         //If statement for blackKing
-        if (board[m.fromRow][m.fromColumn].type().equals("King")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.toRow == 0 && m.toColumn == 4)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackKing = true;
         }
         //If statement for blackLeftRook
-        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+        if (board[m.fromRow][m.fromColumn] != null
+                && board[m.fromRow][m.fromColumn].type().equals("Rook")
                 && (m.toRow == 0 && m.toColumn == 0)
                 && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             blackLeftRook = true;
