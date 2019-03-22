@@ -236,11 +236,11 @@ public class ChessModel implements IChessModel {
             //Saves piece to IChessPiece ArrayList
             takenPieces.add(piecesTaken, board[toRow][toCol]);
         }
-
-//        if((toRow == 7 || toRow == 0) && board[fromRow][fromCol]!= null
-//                && board[fromRow][fromCol].type().equals("Pawn")) {
-//            saveSpot += "@";
-//        }
+        //If statement for pawn in endzone
+        if (board[fromRow][fromCol].type().equals("Pawn")
+            && (toRow == 7 || toRow == 0)){
+            saveSpot += "@";
+        }
 
         //Add string to ArrayList of strings
         moveList.add(numMoves, saveSpot);
@@ -298,11 +298,7 @@ public class ChessModel implements IChessModel {
                     whiteRightRook = true;
                 }
             } //If statement for pawn transformation
-            else if (savedSpot.length() > 4 && savedSpot.charAt(4) == '@'){
-                //Removes the signal "0000" move
-                moveList.remove(numMoves);
-                //Decrements to show the removal
-                numMoves--;
+            else if (savedSpot.length() == 5 && savedSpot.substring(4).equals("@")){
                 //Loads most previous move string
                 savedSpot = moveList.get(numMoves);
                 //Takes the char from 0-3, turns it into a string, parses it into an int
@@ -314,8 +310,8 @@ public class ChessModel implements IChessModel {
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
                 //Makes move
                 move(m);
-                //Sets pawn
-                setPiece(fromRow, fromCol, new Pawn(currentPlayer()));
+                //Sets pawn, currentPlayer().next() will need to be changed once undo doesn't setNextPlayer
+                setPiece(toRow, toCol, new Pawn(currentPlayer().next()));
                 //Removes the pawn transformation move
                 moveList.remove(numMoves);
                 //Decrements to show the removal

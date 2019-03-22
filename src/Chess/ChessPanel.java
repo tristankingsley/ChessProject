@@ -312,7 +312,6 @@ public class ChessPanel extends JPanel {
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
                                     model.pawnTransform(options[type]);
-
                                 }
 
                                 model.setNextPlayer();
