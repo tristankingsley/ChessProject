@@ -608,9 +608,9 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-            if (goneYet)
-                System.out.println("I put white in check");
-        }
+                if (goneYet)
+                    System.out.println("I put white in check");
+            }
 
             //in danger
             if (!goneYet) {
@@ -661,36 +661,36 @@ public class ChessModel implements IChessModel {
             //moves pieces safely
             if (!goneYet){
                 for (int type = 0; type < 5; type++)
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++)
-                        for (int k = 0; k < 8; k++)
-                            for (int l = 0; l < 8; l++)
-                                if (board[i][j] != null && board[i][j].player() == Player.BLACK
-                                        && board[i][j].type().equals(types[4 - type])
-                                        && board[i][j].isValidMove(new Move(i, j, k, l), board) && !goneYet && !inDanger) {
+                    for (int i = 0; i < 8; i++) {
+                        for (int j = 0; j < 8; j++)
+                            for (int k = 0; k < 8; k++)
+                                for (int l = 0; l < 8; l++)
+                                    if (board[i][j] != null && board[i][j].player() == Player.BLACK
+                                            && board[i][j].type().equals(types[4 - type])
+                                            && board[i][j].isValidMove(new Move(i, j, k, l), board) && !goneYet && !inDanger) {
 
-                                    saveMove(i, j, k, l);
-                                    move(new Move(i, j, k, l));
-                                    goneYet = true;
+                                        saveMove(i, j, k, l);
+                                        move(new Move(i, j, k, l));
+                                        goneYet = true;
 
-                                    for (int o = 0; o < 8; o++) {
-                                        for (int p = 0; p < 8; p++)
-                                            if (board[o][p] != null && board[k][l] != null
-                                                    && board[o][p].player() == Player.WHITE
-                                                    && board[o][p].isValidMove(new Move(o, p, k, l), board)) {
-                                                inDanger = true;
-                                            }
+                                        for (int o = 0; o < 8; o++) {
+                                            for (int p = 0; p < 8; p++)
+                                                if (board[o][p] != null && board[k][l] != null
+                                                        && board[o][p].player() == Player.WHITE
+                                                        && board[o][p].isValidMove(new Move(o, p, k, l), board)) {
+                                                    inDanger = true;
+                                                }
+                                        }
+
+                                        if (inDanger) {
+                                            undoMove();
+                                            goneYet = false;
+                                            inDanger = false;
+                                        }
+
+
                                     }
-
-                                    if (inDanger) {
-                                        undoMove();
-                                        goneYet = false;
-                                        inDanger = false;
-                                    }
-
-
-                                }
-                }
+                    }
                 System.out.println("I moved a random piece");
             }
 
