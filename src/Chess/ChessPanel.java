@@ -9,8 +9,8 @@ public class ChessPanel extends JPanel {
     private JButton[][] board;
     private ChessModel model;
     private JButton undoBtn;
-    private JButton castle;
-    private JButton undoCastle;
+    private JButton castleRight;
+    private JButton castleLeft;
     private JToggleButton AI;
     private JToggleButton twoPlayer;
 
@@ -58,8 +58,8 @@ public class ChessPanel extends JPanel {
         //Undo button
         undoBtn = new JButton("Undo Move");
         //Castle buttons
-        castle = new JButton("Castle");
-        undoCastle = new JButton("Undo Castle");
+        castleRight = new JButton("Castle Right Side");
+        castleLeft = new JButton("Castle Left Side");
 
 
         model = new ChessModel();
@@ -124,14 +124,14 @@ public class ChessPanel extends JPanel {
         buttonpanel.add(undoBtn, position);
 
         position.gridy = 4;
-        undoCastle.addActionListener(listener);
-        undoCastle.setPreferredSize(new Dimension(150, 40));
-        buttonpanel.add(undoCastle, position);
+        castleLeft.addActionListener(listener);
+        castleLeft.setPreferredSize(new Dimension(150, 40));
+        buttonpanel.add(castleLeft, position);
 
         position.gridy = 5;
-        castle.addActionListener(listener);
-        castle.setPreferredSize(new Dimension(150, 40));
-        buttonpanel.add(castle, position);
+        castleRight.addActionListener(listener);
+        castleRight.setPreferredSize(new Dimension(150, 40));
+        buttonpanel.add(castleRight, position);
 
         position.gridy = 6;
         buttonpanel.add(AI, position);
@@ -369,20 +369,13 @@ public class ChessPanel extends JPanel {
                 displayBoard();
             }
 
-            if (castle == event.getSource()){
-                if (model.canCastleRight(model.currentPlayer())
-                        && model.canCastleLeft(model.currentPlayer())){
-                    model.castleRight(model.currentPlayer());
-                } else if (model.canCastleLeft(model.currentPlayer())) {
-                    model.castleLeft(model.currentPlayer());
-                } else if (model.canCastleRight(model.currentPlayer())) {
-                    model.castleRight(model.currentPlayer());
-                }
+            if (castleRight == event.getSource()){
+                model.castleRight(model.currentPlayer());
                 displayBoard();
             }
 
-            if (undoCastle == event.getSource()){
-                model.undoCastle();
+            if (castleLeft == event.getSource()){
+                model.castleLeft(model.currentPlayer());
                 displayBoard();
             }
 

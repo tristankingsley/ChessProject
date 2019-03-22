@@ -226,7 +226,7 @@ public class ChessModel implements IChessModel {
         saveSpot += Integer.toString(toCol);
 
         //If statement for adding piece type to string if taking a piece
-        if (board[toRow][toCol] != null) {
+        if (board[toRow][toCol] != null && board[toRow][toCol].player() != currentPlayer()) {
             //Increment pieces taken for accurate sorting into list
             piecesTaken++;
             //Saves piece to string
@@ -245,35 +245,81 @@ public class ChessModel implements IChessModel {
             //Using num moves to ensure accurate index
             String savedSpot = moveList.get(numMoves);
 
-            //Takes the char from 0-3, turns it into a string, parses it into an int
-            int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
-            int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
-            int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
-            int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
-
-            //Creates move object
-            Move m = new Move(fromRow, fromCol, toRow, toCol);
-
-            //If statement for whiteRightRook boolean
-            if (board[fromRow][fromCol] != null &&
-                    board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)){
-                whiteRightRook = true;
+            //This statement covers for castling
+            if (savedSpot.equals("7777")) {
+                //Removes the "7777" move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+                //Creates move object
+                Move m = new Move(fromRow, fromCol, toRow, toCol);
+                //Makes move
+                move(m);
+                //Removes the 3rd castle move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+                //Creates move object
+                Move m2 = new Move(fromRow, fromCol, toRow, toCol);
+                //Makes move
+                move(m2);
+                //Removes the "2nd" castle move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+                //If statement for whiteRightRook boolean
+                if (board[fromRow][fromCol] != null &&
+                        board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)) {
+                    whiteRightRook = true;
+                }
+                return;
             }
+            if (!savedSpot.substring(4).equals("Endzone")) {
 
-            //Makes move
-            move(m);
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
 
-            //If statement for setPiece
-            if (savedSpot.length() > 4) {
-                setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
-                piecesTaken--;
+                //Creates move object
+                Move m = new Move(fromRow, fromCol, toRow, toCol);
+
+                //If statement for whiteRightRook boolean
+                if (board[fromRow][fromCol] != null &&
+                        board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)) {
+                    whiteRightRook = true;
+                }
+
+                //Makes move
+                move(m);
+
+                //If statement for setPiece
+                if (savedSpot.length() > 4) {
+                    setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
+                    piecesTaken--;
+                }
+
+                //Removes element at desired index
+                moveList.remove(numMoves);
+
+                //Decrements numMoves to reflect the removal 0f the element at that index
+                numMoves--;
             }
-
-            //Removes element at desired index
-            moveList.remove(numMoves);
-
-            //Decrements numMoves to reflect the removal 0f the element at that index
-            numMoves--;
         }
     }
 
@@ -323,36 +369,34 @@ public class ChessModel implements IChessModel {
         if (p == player2){
             if (canCastleLeft(p)){
                 //Create move objects, move, save
-                Move m = new Move(0, 4, 0, 3);
-                Move m1 = new Move(0, 3, 0, 2);
-                Move m2 = new Move(0, 0, 0, 3);
+                Move m = new Move(0, 0, 0, 3);
+                Move m1 = new Move(0, 4, 0, 2);
                 saveMove(0, 4, 0, 3);
                 saveMove(0, 3, 0, 2);
-                saveMove(0, 0, 0, 3);
+                //To show that the previous moves are a castle sequence
+                saveMove(7, 7, 7, 7);
                 move(m);
                 move(m1);
-                move(m2);
                 if (inCheck(p)){
-                    undoCastle();
+                    undoMove();
                 }
             }
         }//Checks for player
         else if (p == player1){
             if (canCastleLeft(p)) {
                 //Create move objects, move, save
-                Move m = new Move(7, 4, 7, 3);
-                Move m1 = new Move(7, 3, 7, 2);
-                Move m2 = new Move(7, 0, 7, 3);
-                saveMove(7, 4, 7, 3);
-                saveMove(7, 3, 7, 2);
+                Move m = new Move(7, 0, 7, 3);
+                Move m1 = new Move(7, 4, 7, 2);
                 saveMove(7, 0, 7, 3);
+                saveMove(7, 4, 7, 2);
+                //To show previous moves are a castle sequence
+                saveMove(7, 7, 7, 7);
                 move(m);
                 move(m1);
-                move(m2);
                 //Checks to see if move put us into check
                 if (inCheck(p)) {
                     //Reverses moves to allow for another option
-                    undoCastle();
+                    undoMove();
                 }
             }
         }
@@ -400,46 +444,37 @@ public class ChessModel implements IChessModel {
         if (p == player2){
             if (canCastleRight(p)){
                 //Create move objects, move, save
-                Move m = new Move(0, 4, 0, 5);
-                Move m1 = new Move(0, 5, 0, 6);
-                Move m2 = new Move(0, 7, 0, 5);
-                saveMove(0, 4, 0, 5);
-                saveMove(0, 5, 0, 6);
+                Move m = new Move(0, 7, 0, 5);
+                Move m1 = new Move(0, 4, 0, 6);
                 saveMove(0, 7, 0, 5);
+                saveMove(0, 4, 0, 6);
+                //To show that previous move was a castle sequence
+                saveMove(7, 7, 7, 7);
                 move(m);
                 move(m1);
-                move(m2);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    undoCastle();
+                    undoMove();
                 }
             }
         }//Checks for player
         else if (p == player1){
             if (canCastleRight(p) && whiteRightRook == true){
                 //Create move objects, move, save
-                Move m = new Move(7, 4, 7, 5);
-                Move m1 = new Move(7, 5, 7, 6);
-                Move m2 = new Move(7, 7, 7, 5);
-                saveMove(7, 4, 7, 5);
-                saveMove(7, 5, 7, 6);
+                Move m = new Move(7, 7, 7, 5);
+                Move m1 = new Move(7, 4, 7, 6);
                 saveMove(7, 7, 7, 5);
+                saveMove(7, 4, 7, 6);
+                //To show that the previous two moves were a castle sequence
+                saveMove(7, 7, 7, 7);
                 move(m);
                 move(m1);
-                move(m2);
                 if (inCheck(p)){
                     //If in check, moves pieces back to continue turn
-                    undoCastle();
+                    undoMove();
                 }
             }
         }
-    }
-
-
-    public void undoCastle(){
-        undoMove();
-        undoMove();
-        undoMove();
     }
 
     public boolean canEnPassant(Player p, Move move) {
