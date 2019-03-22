@@ -16,6 +16,11 @@ public class ChessModel implements IChessModel {
     private int numMoves = 0;
     private int piecesTaken = 0;
     private boolean whiteRightRook = true;
+    private boolean whiteKing = true;
+    private boolean whiteLeftRook = true;
+    private boolean blackRightRook = true;
+    private boolean blackKing = true;
+    private boolean blackLeftRook = true;
 
     // declare other instance variables as needed
 
@@ -111,11 +116,7 @@ public class ChessModel implements IChessModel {
 
 
     public void move(Move move) {
-        //If statement for whiteRightRook, consider a void method with a move as a parameter
-        if (board[move.fromRow][move.fromColumn]!= null &&  board[move.fromRow][move.fromColumn].type().equals("Rook")
-                && (move.fromRow == 7 && move.fromColumn == 7)){
-            whiteRightRook = false;
-        }
+        setFirstMoveBoolean(move);
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
     }
@@ -235,6 +236,8 @@ public class ChessModel implements IChessModel {
             takenPieces.add(piecesTaken, board[toRow][toCol]);
         }
 
+
+
         //Add string to ArrayList of strings
         moveList.add(numMoves, saveSpot);
     }
@@ -245,9 +248,9 @@ public class ChessModel implements IChessModel {
             //Using num moves to ensure accurate index
             String savedSpot = moveList.get(numMoves);
 
-            //This statement covers for castling
+            //This statement covers for castling(explanation in castling methods)
             if (savedSpot.equals("7777")) {
-                //Removes the "7777" move
+                //Removes the signal "7777" move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
                 numMoves--;
@@ -299,11 +302,8 @@ public class ChessModel implements IChessModel {
                 //Creates move object
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
 
-                //If statement for whiteRightRook boolean
-                if (board[fromRow][fromCol] != null &&
-                        board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)) {
-                    whiteRightRook = true;
-                }
+                //resets Boolean if part of castle
+                resetFirstMoveBoolean(m);
 
                 //Makes move
                 move(m);
@@ -332,9 +332,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Check if it is black king
-                if (board[0][4] != null && board[0][4].player() == p) {
+                if (board[0][4].type().equals("King") && board[0][4].player() == p && blackKing == true) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[0][0] != null && board[0][0].player() == p) {
+                    if (board[0][0].type().equals("Rook") && board[0][0].player() == p && blackLeftRook == true) {
                         //check if spots between are null
                         if (board[0][1] == null &&
                                 board[0][2] == null &&
@@ -348,9 +348,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Check if it is white king
-                if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                if (board[7][4].type().equals("King") && board[7][4].player() == p && whiteKing == true) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p) {
+                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p && whiteLeftRook == true) {
                         //check if spots between are null
                         if (board[7][1] == null &&
                                 board[7][2] == null &&
@@ -410,9 +410,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sue we are not in check
             if (!inCheck(p)) {
                 //Checks if right-rook is in it's spot
-                if (board[0][7].type().equals("Rook") && board[0][7].player() == p) {
+                if (board[0][7].type().equals("Rook") && board[0][7].player() == p && blackRightRook == true) {
                     //Checks location of king
-                    if (board[0][4].type().equals("King") && board[0][4].player() == p) {
+                    if (board[0][4].type().equals("King") && board[0][4].player() == p && blackKing == true) {
                         //check if spots between are null
                         if (board[0][6] == null && board[0][5] == null) {
                             valid = true;
@@ -425,9 +425,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Checks if right-rook is in it's spot
-                if (board[7][7].type().equals("Rook") && board[7][7].player() == p) {
+                if (board[7][7].type().equals("Rook") && board[7][7].player() == p && whiteRightRook == true) {
                     //Checks location of king
-                    if (board[7][4].type().equals("King") && board[7][4].player() == p) {
+                    if (board[7][4].type().equals("King") && board[7][4].player() == p && whiteKing == true) {
                         //check if spots between are null
                         if (board[7][6] == null && board[7][5] == null) {
                             valid = true;
@@ -459,7 +459,7 @@ public class ChessModel implements IChessModel {
             }
         }//Checks for player
         else if (p == player1){
-            if (canCastleRight(p) && whiteRightRook == true){
+            if (canCastleRight(p)){
                 //Create move objects, move, save
                 Move m = new Move(7, 7, 7, 5);
                 Move m1 = new Move(7, 4, 7, 6);
@@ -512,6 +512,85 @@ public class ChessModel implements IChessModel {
             }
         }
         return false;
+    }
+
+    public void setFirstMoveBoolean(Move m){
+        //If statement for whiteRightRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.fromRow == 7 && m.fromColumn == 7)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteRightRook = false;
+        }
+        //If statement for whiteKing
+        if (board[m.fromRow][m.fromColumn].type().equals("King")
+                && (m.fromRow == 7 && m.fromColumn == 4)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteKing = false;
+        }
+        //If statement for whiteLeftRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.fromRow == 7 && m.fromColumn == 0)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteLeftRook = false;
+        }
+        //If statement for blackRightRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.fromRow == 0 && m.fromColumn == 7)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackRightRook = false;
+        }
+        //If statement for blackKing
+        if (board[m.fromRow][m.fromColumn].type().equals("King")
+                && (m.fromRow == 0 && m.fromColumn == 4)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackKing = false;
+        }
+        //If statement for blackLeftRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.fromRow == 0 && m.fromColumn == 0)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackLeftRook = false;
+        }
+
+    }
+
+    public void resetFirstMoveBoolean(Move m){
+        //If statement for whiteRightRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+            && (m.toRow == 7 && m.toColumn == 7)
+            && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteRightRook = true;
+        }
+        //If statement for whiteKing
+        if (board[m.fromRow][m.fromColumn].type().equals("King")
+                && (m.toRow == 7 && m.toColumn == 4)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteKing = true;
+        }
+        //If statement for whiteLeftRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.toRow == 7 && m.toColumn == 0)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            whiteLeftRook = true;
+        }
+        //If statement for blackRightRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.toRow == 0 && m.toColumn == 7)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackRightRook = true;
+        }
+        //If statement for blackKing
+        if (board[m.fromRow][m.fromColumn].type().equals("King")
+                && (m.toRow == 0 && m.toColumn == 4)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackKing = true;
+        }
+        //If statement for blackLeftRook
+        if (board[m.fromRow][m.fromColumn].type().equals("Rook")
+                && (m.toRow == 0 && m.toColumn == 0)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            blackLeftRook = true;
+        }
     }
 
     public Player currentPlayer() {
