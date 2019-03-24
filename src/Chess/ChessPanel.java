@@ -7,12 +7,12 @@ import javax.swing.*;
 public class ChessPanel extends JPanel {
 
     private JButton[][] board;
-    private ChessModel model;
+    protected ChessModel model;
     private JButton undoBtn;
     private JButton castleRight;
     private JButton castleLeft;
-    private JToggleButton AI;
-    private JToggleButton twoPlayer;
+    protected JToggleButton AI;
+    protected JToggleButton twoPlayer;
 
     private ImageIcon wRook;
     private ImageIcon wBishop;
