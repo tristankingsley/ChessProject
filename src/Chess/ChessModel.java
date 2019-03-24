@@ -593,16 +593,14 @@ public class ChessModel implements IChessModel {
         if (board[m.fromRow][m.fromColumn] != null
                 && board[m.fromRow][m.fromColumn].type().equals("Rook")
             && (m.toRow == 7 && m.toColumn == 7)
-            //&& board[m.fromRow][m.fromColumn].player() == currentPlayer()
-        ){
+            && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteRightRook = true;
         }
         //If statement for whiteKing
         if (board[m.fromRow][m.fromColumn] != null
                 && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.toRow == 7 && m.toColumn == 4)
-                //&& board[m.fromRow][m.fromColumn].player() == currentPlayer()
-        ){
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteKing = true;
         }
         //If statement for whiteLeftRook
