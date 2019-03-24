@@ -88,9 +88,9 @@ public class ChessModel implements IChessModel {
         if (board[move.fromRow][move.fromColumn] != null) {
             if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
                     if(board[move.fromRow][move.fromColumn] != null)
-                        if((board[move.fromRow][move.fromColumn].isValidMove(move, board)))
-                        //|| canEnPassant(currentPlayer(), move))
-                            if ( putsPlayerInCheck(move))
+                        if((board[move.fromRow][move.fromColumn].isValidMove(move, board))
+                        || canEnPassant(currentPlayer(), move))
+                            if (putsPlayerInCheck(move))
 
 
                     valid = true;
@@ -244,6 +244,7 @@ public class ChessModel implements IChessModel {
 
         //Add string to ArrayList of strings
         moveList.add(numMoves, saveSpot);
+        System.out.println(moveList);
     }
 
     public void undoMove(){
@@ -318,33 +319,52 @@ public class ChessModel implements IChessModel {
                 moveList.remove(numMoves);
                 //Decrements to show the removal
                 numMoves--;
-            } //Else covers everything else
-            else {
-
+            } //Else covers En Passant
+            else if (savedSpot.equals("0474")){
+                //Removes the signal "0747" move
+                moveList.remove(numMoves);
+                //Decrements to show the removal
+                numMoves--;
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
                 //Takes the char from 0-3, turns it into a string, parses it into an int
                 int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
                 int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
                 int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
                 int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
-
                 //Creates move object
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
-
-                //resets Boolean if part of castle
+                //Checks for first move boolean reset
                 resetFirstMoveBoolean(m);
-
                 //Makes move
                 move(m);
-
+                //if statement for pawn placement
+                if (toCol > fromCol){
+                    setPiece(toRow, toCol - 1, new Pawn(currentPlayer().next()));
+                } else {
+                    setPiece(toRow, toCol + 1, new Pawn(currentPlayer().next()));
+                }
+            }
+            //Else covers everything else
+            else {
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+                //Creates move object
+                Move m = new Move(fromRow, fromCol, toRow, toCol);
+                //resets Boolean if part of castle
+                resetFirstMoveBoolean(m);
+                //Makes move
+                move(m);
                 //If statement for setPiece
                 if (savedSpot.length() > 4) {
                     setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
                     piecesTaken--;
                 }
-
                 //Removes element at desired index
                 moveList.remove(numMoves);
-
                 //Decrements numMoves to reflect the removal 0f the element at that index
                 numMoves--;
             }
@@ -530,10 +550,9 @@ public class ChessModel implements IChessModel {
                         && board[pawnToRow][pawnToCol].player() != p) {
                     if (move.fromRow == pawnToRow &&
                             move.toRow + direction == pawnToRow && move.toColumn == pawnToCol) {
-
+                        //Sets piece move to null
                         setPiece(pawnToRow, pawnFromCol, null);
                         return true;
-
                     }
 
                 }

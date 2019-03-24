@@ -56,9 +56,9 @@ public class ChessModelTest {
     }
 
     @Test
-    public void testCastling() {
+    public void testCastlingRight() {
         ChessModel game = new ChessModel();
-        Move m = new Move(6,4,3,4);
+        Move m = new Move(6,4,4,4);
         Move m2 = new Move(7,6,5,7);
         Move m3 = new Move(7,5,5,3);
         game.move(m);
@@ -66,6 +66,21 @@ public class ChessModelTest {
         game.move(m3);
         Assert.assertTrue(game.canCastleRight(Player.WHITE));
         game.castleRight(Player.WHITE);
+    }
+
+    @Test
+    public void testCastlingLeft(){
+        ChessModel game = new ChessModel();
+        Move m = new Move(6, 3, 4, 3);
+        Move m1 = new Move(7, 2, 5, 4);
+        Move m2 = new Move(7, 3, 5, 3);
+        Move m3 = new Move(7, 1, 5, 2);
+        game.move(m);
+        game.move(m1);
+        game.move(m2);
+        game.move(m3);
+        Assert.assertTrue(game.canCastleLeft(Player.WHITE));
+        game.castleLeft(Player.WHITE);
     }
 
     @Test
@@ -165,4 +180,35 @@ public class ChessModelTest {
         Move m = new Move(0,4,1,3);
         Assert.assertTrue(game.model.isValidMove(m));
     }
+
+    @Test
+    public void testNotYourTurn(){
+        ChessModel game = new ChessModel();
+        //black move when it is white's turn
+        Move m = new Move(1, 0, 2, 0);
+        game.move(m);
+        Assert.assertFalse(game.isValidMove(m));
+    }
+
+    @Test
+    public void isCompleteFail(){
+        ChessModel game = new ChessModel();
+        //Can't be in checkmate on first move
+        Assert.assertFalse(game.isComplete());
+    }
+
+    @Test
+    public void undoCastlingTest(){
+        ChessModel game = new ChessModel();
+        Move m = new Move(6,4,3,4);
+        Move m2 = new Move(7,6,5,7);
+        Move m3 = new Move(7,5,5,3);
+        game.move(m);
+        game.move(m2);
+        game.move(m3);
+        game.castleRight(Player.WHITE);
+        game.undoMove();
+        Assert.assertEquals("Rook", game.pieceAt(7, 7).type());
+    }
+
 }
