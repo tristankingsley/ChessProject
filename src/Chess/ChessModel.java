@@ -267,10 +267,10 @@ public class ChessModel implements IChessModel {
                 int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
                 //Creates move object
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
-                //Makes move
-                move(m);
                 //Checks for first move boolean reset
                 resetFirstMoveBoolean(m);
+                //Makes move
+                move(m);
                 //Removes the 1st castle move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
@@ -284,10 +284,10 @@ public class ChessModel implements IChessModel {
                 fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
                 //Creates move object
                 Move m2 = new Move(fromRow, fromCol, toRow, toCol);
-                //Makes move
-                move(m2);
                 //Checks for first move boolean reset
                 resetFirstMoveBoolean(m2);
+                //Makes move
+                move(m2);
                 //Removes the "2nd" castle move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
@@ -308,10 +308,12 @@ public class ChessModel implements IChessModel {
                 int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
                 //Creates move object
                 Move m = new Move(fromRow, fromCol, toRow, toCol);
+                //Reset first move boolean
+                resetFirstMoveBoolean(m);
                 //Makes move
                 move(m);
-                //Sets pawn, currentPlayer().next() will need to be changed once undo doesn't setNextPlayer
-                setPiece(toRow, toCol, new Pawn(currentPlayer().next()));
+                //Sets pawn
+                setPiece(toRow, toCol, new Pawn(currentPlayer()));
                 //Removes the pawn transformation move
                 moveList.remove(numMoves);
                 //Decrements to show the removal
@@ -591,14 +593,16 @@ public class ChessModel implements IChessModel {
         if (board[m.fromRow][m.fromColumn] != null
                 && board[m.fromRow][m.fromColumn].type().equals("Rook")
             && (m.toRow == 7 && m.toColumn == 7)
-            && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+            //&& board[m.fromRow][m.fromColumn].player() == currentPlayer()
+        ){
             whiteRightRook = true;
         }
         //If statement for whiteKing
         if (board[m.fromRow][m.fromColumn] != null
                 && board[m.fromRow][m.fromColumn].type().equals("King")
                 && (m.toRow == 7 && m.toColumn == 4)
-                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+                //&& board[m.fromRow][m.fromColumn].player() == currentPlayer()
+        ){
             whiteKing = true;
         }
         //If statement for whiteLeftRook
