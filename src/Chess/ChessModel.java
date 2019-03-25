@@ -380,9 +380,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Check if it is black king
-                if (board[0][4].type().equals("King") && board[0][4].player() == p && blackKing == true) {
+                if (board[0][4].type().equals("King") && board[0][4].player() == p && blackKing) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[0][0].type().equals("Rook") && board[0][0].player() == p && blackLeftRook == true) {
+                    if (board[0][0].type().equals("Rook") && board[0][0].player() == p && blackLeftRook) {
                         //check if spots between are null
                         if (board[0][1] == null &&
                                 board[0][2] == null &&
@@ -396,9 +396,9 @@ public class ChessModel implements IChessModel {
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
                 //Check if it is white king
-                if (board[7][4].type().equals("King") && board[7][4].player() == p && whiteKing == true) {
+                if (board[7][4].type().equals("King") && board[7][4].player() == p && whiteKing) {
                     //Checks to see if left-Rook is in spot and is black
-                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p && whiteLeftRook == true) {
+                    if (board[7][0].type().equals("Rook") && board[7][0].player() == p && whiteLeftRook) {
                         //check if spots between are null
                         if (board[7][1] == null &&
                                 board[7][2] == null &&
@@ -693,19 +693,23 @@ public class ChessModel implements IChessModel {
          *d. Move a piece (pawns first) forward toward opponent king
          *		i. check to see if that piece is in danger of being removed, if so, move a different piece.
          */
-        ArrayList<IChessPiece> AIPieces = new ArrayList<>();
 
-        int bKingX = 0;
-        int bKingY = 0;
+
+        //used as coordinates for the white king
         int wKingX = 0;
         int wKingY = 0;
 
+        //used to reset the loops to find alternate moves
         boolean goneYet = false;
         boolean inDanger = false;
 
+        //used to prioritize pieces within the loops
         String[] types = {"Queen", "Bishop", "Rook", "Knight", "Pawn"};
 
+
         if (currentPlayer() == Player.BLACK) {
+
+            //locates the white king
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++) {
                     if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[i][j].type().equals("King")) {
@@ -714,24 +718,27 @@ public class ChessModel implements IChessModel {
                     }
                 }
 
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++) {
-                    if (board[i][j] != null && board[i][j].player() == Player.BLACK && board[i][j].type().equals("King")) {
-                        bKingX = i;
-                        bKingY = j;
-                    }
-                }
             //keeps black out of check
             if (inCheck(Player.BLACK)) {
+
+                //black piece coordinates
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
+
+                        //attempted space to move to
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++) {
+
+                                //if the piece belongs to black, the move is valid and we haven't gone yet
                                 if (board[i][j] != null && board[i][j].player() == Player.BLACK
                                         && board[i][j].isValidMove(new Move(i, j, k, l), board) && !goneYet) {
+
+                                    //saves and tries move
                                     saveMove(i, j, k, l);
                                     move(new Move(i, j, k, l));
                                     goneYet = true;
+
+                                    //if black is still in check, undoes move and does loop again
                                     if (inCheck(Player.BLACK)) {
                                         undoMove();
                                         goneYet = false;
@@ -739,32 +746,38 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-                if (goneYet)
-                    System.out.println("I got out of check");
             }
 
             // tries to put white in check
-            if (!goneYet){
-                //Black coordinates
+            if (!goneYet) {
+
+                //Black piece coordinates
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++)
                         //Attempted space
+
                         for (int k = 0; k < 8; k++)
                             for (int l = 0; l < 8; l++) {
-                                //if the piece belongs to black, the move is valid and I haven't gone yet
+
+                                //if the piece belongs to black, the move is valid and AI hasn't gone yet
                                 if (board[i][j] != null && board[i][j].player() == Player.BLACK
                                         && board[i][j].isValidMove(new Move(i, j, k, l), board)
                                         && !goneYet) {
+
+                                    // saves and makes the move
                                     saveMove(i, j, k, l);
                                     move(new Move(i, j, k, l));
                                     goneYet = true;
 
+
+                                    // sets the boolean if we didn't get white in check
                                     if (board[k][l] != null &&
                                             board[k][l].player() == Player.BLACK
                                             && !board[k][l].isValidMove(new Move(k, l, wKingX, wKingY), board)) {
                                         inDanger = true;
                                     }
 
+                                    //checks to see if the move was dangerous
                                     for (int m = 0; m < 8; m++) {
                                         for (int n = 0; n < 8; n++)
                                             if (board[m][n] != null && board[k][l] != null
@@ -774,6 +787,8 @@ public class ChessModel implements IChessModel {
                                             }
                                     }
                                 }
+
+                                //undoes move to trigger the loop again
                                 if (inDanger) {
                                     undoMove();
                                     goneYet = false;
@@ -781,71 +796,142 @@ public class ChessModel implements IChessModel {
                                 }
                             }
                 }
-                if (goneYet)
-                    System.out.println("I put white in check");
             }
-
-            //in danger
+            //attempts to move pieces out of danger
             if (!goneYet) {
+
+                //prioritizes the pieces by type
                 for (int type = 0; type < 5; type++)
+
                     //white's coordinate
                     for (int i = 0; i < 8; i++) {
                         for (int j = 0; j < 8; j++)
-                            //black's coordinate
+
+                            //black's threatened coordinate
                             for (int k = 0; k < 8; k++)
                                 for (int l = 0; l < 8; l++) {
-                                    if (board[i][j] != null && board[i][j].player() == Player.WHITE && board[k][l] != null
-                                            && board[k][l].player() == Player.BLACK && board[k][l].type().equals(types[type])
-                                            && board[i][j].isValidMove(new Move(i, j, k, l), board)
-                                            && !goneYet) {
-                                        for (int m = 0; m < 8; m++)
-                                            for (int n = 0; n < 8; n++)
-                                                if (board[k][l] != null && board[k][l].isValidMove(new Move(k, l, m, n), board)
-                                                        && board[k][l].type().equals(types[type]) && !inDanger) {
 
-                                                    saveMove(k, l, m, n);
-                                                    move(new Move(k, l, m, n));
-                                                    goneYet = true;
+                                    //checks to see if AI's piece can be targeted by black and if AI has gone
+                                    if (board[i][j] != null && board[i][j].player() == Player.WHITE
+                                            && board[k][l] != null && board[k][l].player() == Player.BLACK
+                                            && board[k][l].type().equals(types[type])
+                                            && board[i][j].isValidMove(new Move(i, j, k, l), board)) {
 
-                                                    for (int o = 0; o < 8; o++) {
-                                                        for (int p = 0; p < 8; p++)
-                                                            if (board[o][p] != null && board[k][l] != null
-                                                                    && board[o][p].player() == Player.WHITE
-                                                                    && board[o][p].isValidMove(new Move(o, p, k, l), board)) {
-                                                                inDanger = true;
-                                                            }
+                                        //for piece prioritization
+                                        for (int typeTwo = 0; typeTwo < 5; typeTwo++) {
+
+                                            //capture the threat
+                                            //AI's piece to move coordinates
+                                            for (int m = 0; m < 8; m++)
+                                                for (int n = 0; n < 8; n++) {
+
+                                                    //if the piece belongs to AI and if the move is valid
+                                                    if (board[m][n] != null && board[m][n].player() == Player.BLACK
+                                                            && board[m][n].isValidMove(new Move(m, n, i, j), board)
+                                                            && board[m][n].type().equals(types[4 - typeTwo]) && !goneYet) {
+
+                                                        //saves and makes the move
+                                                        saveMove(m, n, i, j);
+                                                        move(new Move(m, n, i, j));
+                                                        goneYet = true;
+
+                                                        //sees if any white pieces can take it
+                                                        for (int o = 0; o < 8; o++) {
+                                                            for (int p = 0; p < 8; p++)
+                                                                if (board[o][p] != null && board[i][j] != null &&
+                                                                        board[i][j].player() == Player.BLACK
+                                                                        && board[o][p].player() == Player.WHITE
+                                                                        && board[o][p].isValidMove(new Move(o, p, i, j), board)) {
+                                                                    inDanger = true;
+                                                                }
+                                                        }
+
+                                                        //checks to see if move put AI in check
+                                                        if (inCheck(Player.BLACK))
+                                                            inDanger = true;
+
+                                                        //redoes loop if need be
+                                                        if (inDanger) {
+                                                            undoMove();
+                                                            goneYet = false;
+                                                            inDanger = false;
+                                                        }
                                                     }
-                                                    if (inCheck(Player.BLACK))
-                                                        inDanger = true;
 
-                                                    if (inDanger) {
-                                                        undoMove();
-                                                        goneYet = false;
-                                                        inDanger = false;
+
+                                                    //if AI couldn't capture the threat
+                                                     if (!goneYet) {
+
+                                                    //attempted move coordinates
+                                                        for (int t = 0; t < 8; t++)
+                                                            for (int q = 0; q < 8; q++)
+
+                                                                //if the move is valid and our piece is of the right type
+                                                                if (board[m][n] != null && board[m][n].player() == Player.BLACK
+                                                                        && board[m][n].isValidMove(new Move(m, n, t, q), board)
+                                                                        && board[m][n].type().equals(types[4 - typeTwo]) && !goneYet) {
+
+                                                                    //saves and makes the move
+                                                                    saveMove(m, n, t, q);
+                                                                    move(new Move(m, n, t, q));
+                                                                    goneYet = true;
+
+                                                                    //sees if any white pieces can take it
+                                                                    for (int o = 0; o < 8; o++) {
+                                                                        for (int p = 0; p < 8; p++)
+                                                                            if (board[o][p] != null && board[k][l] != null
+                                                                                    && board[o][p].player() == Player.WHITE
+                                                                                    && board[o][p].isValidMove(new Move(o, p, k, l), board)) {
+                                                                                inDanger = true;
+                                                                            }
+                                                                    }
+
+                                                                    //checks to see if move put AI in check
+                                                                    if (inCheck(Player.BLACK))
+                                                                        inDanger = true;
+
+                                                                    //redoes loop if need be
+                                                                    if (inDanger) {
+                                                                        undoMove();
+                                                                        goneYet = false;
+                                                                        inDanger = false;
+                                                                    }
+                                                                }
                                                     }
                                                 }
+                                        }
                                     }
                                 }
                     }
-                if (goneYet)
-                    System.out.println("I moved a piece out of danger");
             }
 
             //moves pieces safely
             if (!goneYet){
+
+                //prioritizes pieces
                 for (int type = 0; type < 5; type++)
+
+                    //AI's coordinates
                     for (int i = 0; i < 8; i++) {
                         for (int j = 0; j < 8; j++)
+
+                            //attempted move coordinates
                             for (int k = 0; k < 8; k++)
                                 for (int l = 0; l < 8; l++)
+
+                                    //if the piece belongs to AI, is the right type, the move is valid, and
+                                    //AI hasn't gone yet
                                     if (board[i][j] != null && board[i][j].player() == Player.BLACK
                                             && board[i][j].type().equals(types[4 - type])
-                                            && board[i][j].isValidMove(new Move(i, j, k, l), board) && !goneYet && !inDanger) {
+                                            && board[i][j].isValidMove(new Move(i, j, k, l), board)
+                                            && !goneYet) {
 
+                                        //saves  and attempts the move
                                         saveMove(i, j, k, l);
                                         move(new Move(i, j, k, l));
                                         goneYet = true;
 
+                                        //checks to see if white can take the moved piece
                                         for (int o = 0; o < 8; o++) {
                                             for (int p = 0; p < 8; p++)
                                                 if (board[o][p] != null && board[k][l] != null
@@ -855,24 +941,15 @@ public class ChessModel implements IChessModel {
                                                 }
                                         }
 
+                                        //redoes loop if necessary
                                         if (inDanger) {
                                             undoMove();
                                             goneYet = false;
                                             inDanger = false;
                                         }
-
-
                                     }
                     }
-                System.out.println("I moved a random piece");
             }
-
-            if(!goneYet)
-                System.out.println("I couldn't place a random piece.");
-
-
-
-            System.out.println("---------------------------------------------------");
         }
     }
 }
