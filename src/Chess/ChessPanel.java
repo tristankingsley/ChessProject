@@ -326,25 +326,11 @@ public class ChessPanel extends JPanel {
                                         model.pawnTransform("Queen");
                                     }
 
-                                    if (model.isComplete()) {
-
-                                        model.setNextPlayer();
-                                        //Shows message saying who has won
-                                        JOptionPane.showMessageDialog(null,
-                                                "Game Over!" + "\n" + model.currentPlayer()
-                                                        + "has won!");
-                                        //Shows messages to click reset button if wanting to play again
-                                        JOptionPane.showMessageDialog(null,
-                                                "Please click the 'OKAY; button if you" +
-                                                        "\n would like to play again!");
-                                        //Resets board anyway :)
-                                        model = new ChessModel();
-                                    } else {
                                         model.setNextPlayer();
 
                                         if (model.inCheck(model.currentPlayer()))
                                             JOptionPane.showMessageDialog(null, model.currentPlayer() + " is in Check");
-                                    }
+
                                 } else {
 
                                     turn.setText(model.currentPlayer().toString() + "'S TURN");
@@ -394,7 +380,7 @@ public class ChessPanel extends JPanel {
                 }
             }
 
-            if (!AI.isSelected() && model.isComplete()){
+            if (AI.isSelected() && model.isComplete()){
 
                 model.setNextPlayer();
                 //Shows message saying who has won

@@ -996,7 +996,8 @@ public class ChessModel implements IChessModel {
                                         for (int n = 0; n < 8; n++)
                                             if (board[m][n] != null && board[k][l] != null
                                                     && board[m][n].player() == Player.WHITE
-                                                    && board[m][n].isValidMove(new Move(m, n, k, l), board)) {
+                                                    && board[m][n].isValidMove(new Move(m, n, k, l), board)
+                                                    || inCheck(Player.BLACK)) {
                                                 inDanger = true;
                                             }
                                     }
@@ -1150,7 +1151,8 @@ public class ChessModel implements IChessModel {
                                             for (int p = 0; p < 8; p++)
                                                 if (board[o][p] != null && board[k][l] != null
                                                         && board[o][p].player() == Player.WHITE
-                                                        && board[o][p].isValidMove(new Move(o, p, k, l), board)) {
+                                                        && board[o][p].isValidMove(new Move(o, p, k, l), board) ||
+                                                    inCheck(Player.BLACK)) {
                                                     inDanger = true;
                                                 }
                                         }

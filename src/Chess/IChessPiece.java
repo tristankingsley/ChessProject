@@ -16,7 +16,7 @@ public interface IChessPiece {
 	 */
 	String type();
 
-	/**
+	/*******************************************************************************************************************
 	 * Returns whether the piece at location {@code [move.fromRow, move.fromColumn]} is allowed to move to location
 	 * {@code [move.fromRow, move.fromColumn]}.
 	 *
@@ -31,6 +31,6 @@ public interface IChessPiece {
 	 * @throws IndexOutOfBoundsException if either {@code [move.fromRow, move.fromColumn]} or {@code [move.toRow,
 	 *                                   move.toColumn]} don't represent valid locations on the board.
 	 * @throws IllegalArgumentException  if {@code this} object isn't the piece at location {@code [move.fromRow, move.fromColumn]}.
-	 */
+	 ******************************************************************************************************************/
 	boolean isValidMove(Move move, IChessPiece[][] board);
 }
