@@ -372,12 +372,12 @@ public class ChessPanel extends JPanel {
                 if(model.canCastleRight(model.currentPlayer())) {
                     model.castleRight(model.currentPlayer());
                     displayBoard();
-//                    model.setNextPlayer();
-//                    if (AI.isSelected()) {
-//                        model.AI();
-//                        displayBoard();
-//                        model.setNextPlayer();
-//                    }
+                    model.setNextPlayer();
+                    if (AI.isSelected()) {
+                        model.AI();
+                        displayBoard();
+                        model.setNextPlayer();
+                    }
                 }
             }
 
@@ -385,12 +385,12 @@ public class ChessPanel extends JPanel {
                 if(model.canCastleLeft(model.currentPlayer())) {
                     model.castleLeft(model.currentPlayer());
                     displayBoard();
-//                    model.setNextPlayer();
-//                    if (AI.isSelected()) {
-//                        model.AI();
-//                        displayBoard();
-//                        model.setNextPlayer();
-//                    }
+                    model.setNextPlayer();
+                    if (AI.isSelected()) {
+                        model.AI();
+                        displayBoard();
+                        model.setNextPlayer();
+                    }
                 }
             }
 
