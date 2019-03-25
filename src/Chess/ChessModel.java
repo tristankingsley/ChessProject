@@ -72,6 +72,12 @@ public class ChessModel implements IChessModel {
 
     }
 
+
+    /*******************************************************************************************************************
+     * Returns whether the game is complete.
+     *
+     * @return {@code true} if complete, {@code false} otherwise.
+     ******************************************************************************************************************/
     public boolean isComplete() {
         boolean valid = false;
 
@@ -82,23 +88,39 @@ public class ChessModel implements IChessModel {
         return valid;
     }
 
+    /*******************************************************************************************************************
+     * Returns whether the piece at location {@code [move.fromRow, move.fromColumn]} is allowed to move to location
+     * {@code [move.fromRow, move.fromColumn]}.
+     *
+     * @param move a {@link Chess.Move} object describing the move to be made.
+     * @return {@code true} if the proposed move is valid, {@code false} otherwise.
+     * @throws IndexOutOfBoundsException if either {@code [move.fromRow, move.fromColumn]} or {@code [move.toRow,
+                                        move.toColumn]} don't represent valid locations on the board.
+     ******************************************************************************************************************/
     public boolean isValidMove(Move move) {
-        boolean valid = false;
+        if(move.fromRow < 0 || move.fromRow > 7 || move.toRow < 0 || move.toRow > 7 || move.fromColumn < 0
+                || move.fromColumn > 7 || move.toColumn > 0 || move.toColumn < 7)
+            throw new IndexOutOfBoundsException();
+        else {
 
-        if (board[move.fromRow][move.fromColumn] != null) {
-            if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
-                    if(board[move.fromRow][move.fromColumn] != null)
-                        if((board[move.fromRow][move.fromColumn].isValidMove(move, board))
-                        || canEnPassant(currentPlayer(), move))
+
+            boolean valid = false;
+
+            if (board[move.fromRow][move.fromColumn] != null) {
+                if (board[move.fromRow][move.fromColumn].player() == currentPlayer()) {
+                    if (board[move.fromRow][move.fromColumn] != null)
+                        if ((board[move.fromRow][move.fromColumn].isValidMove(move, board))
+                                || canEnPassant(currentPlayer(), move))
                             if (putsPlayerInCheck(move))
 
 
-                    valid = true;
-            } else {
-                JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
+                                valid = true;
+                } else {
+                    JOptionPane.showMessageDialog(null, currentPlayer().toString() + "'S TURN");
+                }
             }
+            return valid;
         }
-        return valid;
     }
 
     public boolean putsPlayerInCheck(Move move){
@@ -115,10 +137,23 @@ public class ChessModel implements IChessModel {
     }
 
 
+    /*******************************************************************************************************************
+     * Moves the piece from location {@code [move.fromRow, move.fromColumn]} to location {@code [move.fromRow,
+     * move.fromColumn]}.
+     *
+     * @param move a {@link Chess.Move} object describing the move to be made.
+     * @throws IndexOutOfBoundsException if either {@code [move.fromRow, move.fromColumn]} or {@code [move.toRow,
+     *                                   move.toColumn]} don't represent valid locations on the board.
+     ******************************************************************************************************************/
     public void move(Move move) {
-        setFirstMoveBoolean(move);
+        if(move.fromRow < 0 || move.fromRow > 7 || move.toRow < 0 || move.toRow > 7 || move.fromColumn < 0
+                || move.fromColumn > 7 || move.toColumn > 0 || move.toColumn < 7)
+            throw new IndexOutOfBoundsException();
+        else{
+            setFirstMoveBoolean(move);
         board[move.toRow][move.toColumn] = board[move.fromRow][move.fromColumn];
         board[move.fromRow][move.fromColumn] = null;
+        }
     }
 
     public boolean pawnInEndzone(){
