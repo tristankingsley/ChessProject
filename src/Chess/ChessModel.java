@@ -411,7 +411,7 @@ public class ChessModel implements IChessModel {
             }
 
             //If statement for pawn transformation
-            else if (savedSpot.length() == 5 && savedSpot.substring(4).equals("@")){
+            else if (savedSpot.length() >= 5 && savedSpot.charAt(savedSpot.length() - 1) == '@'){
 
                 //Loads most previous move string
                 savedSpot = moveList.get(numMoves);
@@ -431,8 +431,14 @@ public class ChessModel implements IChessModel {
                 //Makes move
                 move(m);
 
+                //If statement for setPiece
+                if (savedSpot.length() > 4) {
+                    setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
+                    piecesTaken--;
+                }
+                
                 //Sets pawn
-                setPiece(toRow, toCol, new Pawn(currentPlayer()));
+                setPiece(toRow, toCol, new Pawn(currentPlayer().next()));
 
                 //Removes the pawn transformation move
                 moveList.remove(numMoves);
