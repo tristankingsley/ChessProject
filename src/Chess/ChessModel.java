@@ -99,7 +99,7 @@ public class ChessModel implements IChessModel {
      ******************************************************************************************************************/
     public boolean isValidMove(Move move) {
         if(move.fromRow < 0 || move.fromRow > 7 || move.toRow < 0 || move.toRow > 7 || move.fromColumn < 0
-                || move.fromColumn > 7 || move.toColumn > 0 || move.toColumn < 7)
+                || move.fromColumn > 7 || move.toColumn < 0 || move.toColumn > 7)
             throw new IndexOutOfBoundsException();
         else {
 
@@ -147,7 +147,7 @@ public class ChessModel implements IChessModel {
      ******************************************************************************************************************/
     public void move(Move move) {
         if(move.fromRow < 0 || move.fromRow > 7 || move.toRow < 0 || move.toRow > 7 || move.fromColumn < 0
-                || move.fromColumn > 7 || move.toColumn > 0 || move.toColumn < 7)
+                || move.fromColumn > 7 || move.toColumn < 0 || move.toColumn > 7)
             throw new IndexOutOfBoundsException();
         else{
             setFirstMoveBoolean(move);
