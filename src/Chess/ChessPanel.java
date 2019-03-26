@@ -4,6 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/*******************************************************************************************************************
+ * This class uses buttons, toggles, labels, and panels in order to create
+ * a working user-interface for the game of Chess
+ ******************************************************************************************************************/
 public class ChessPanel extends JPanel {
 
     //Button array for the board
@@ -63,7 +67,7 @@ public class ChessPanel extends JPanel {
     private listener listener;
 
 /*******************************************************************************************************************
- * This method instantiates buttons, toggles, labels, and panels in order to create
+ * This constructor instantiates buttons, toggles, labels, and panels in order to create
  * a working user-interface for the game of Chess
  ******************************************************************************************************************/
  public ChessPanel() {
