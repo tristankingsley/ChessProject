@@ -317,13 +317,10 @@ public class ChessModel implements IChessModel {
 
         //If statement for adding piece type to string if taking a piece
         if (board[toRow][toCol] != null && board[toRow][toCol].player() != currentPlayer()) {
-
             //Increment pieces taken for accurate sorting into list
             piecesTaken++;
-
             //Saves piece to string
             saveSpot += board[toRow][toCol].type();
-
             //Saves piece to IChessPiece ArrayList
             takenPieces.add(piecesTaken, board[toRow][toCol]);
         }
@@ -402,16 +399,10 @@ public class ChessModel implements IChessModel {
 
                 //Decrements to show the removal
                 numMoves--;
-
-                //If statement for whiteRightRook boolean
-                if (board[fromRow][fromCol] != null &&
-                        board[fromRow][fromCol].type().equals("Rook") && (toCol == 7 && toRow == 7)) {
-                    whiteRightRook = true;
-                }
             }
 
-            //If statement for pawn transformation
-            else if (savedSpot.length() >= 5 && savedSpot.charAt(savedSpot.length() - 1) == '@'){
+            //If statement for pawn transformation including enemy piece captured
+            else if (savedSpot.length() > 5 && savedSpot.charAt(savedSpot.length() - 1) == '@'){
 
                 //Loads most previous move string
                 savedSpot = moveList.get(numMoves);
@@ -436,7 +427,38 @@ public class ChessModel implements IChessModel {
                     setPiece(fromRow, fromCol, takenPieces.get(piecesTaken));
                     piecesTaken--;
                 }
-                
+
+                //Sets pawn
+                setPiece(toRow, toCol, new Pawn(currentPlayer()));
+
+                //Removes the pawn transformation move
+                moveList.remove(numMoves);
+
+                //Decrements to show the removal
+                numMoves--;
+            }
+
+            //Else statement covers pawn transformation, no piece capture
+            else if (savedSpot.length() == 5 && savedSpot.charAt(4) == '@'){
+
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
+
+                //Takes the char from 0-3, turns it into a string, parses it into an int
+                int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
+                int toCol = Integer.parseInt(Character.toString(savedSpot.charAt(1)));
+                int fromRow = Integer.parseInt(Character.toString(savedSpot.charAt(2)));
+                int fromCol = Integer.parseInt(Character.toString(savedSpot.charAt(3)));
+
+                //Creates move object
+                Move m = new Move(fromRow, fromCol, toRow, toCol);
+
+                //Reset first move boolean
+                resetFirstMoveBoolean(m);
+
+                //Makes move
+                move(m);
+
                 //Sets pawn
                 setPiece(toRow, toCol, new Pawn(currentPlayer().next()));
 
@@ -450,14 +472,14 @@ public class ChessModel implements IChessModel {
             //Else covers En Passant
             else if (savedSpot.equals("0474")){
 
-                //Removes the signal "0747" move
-                moveList.remove(numMoves);
-
-                //Decrements to show the removal
-                numMoves--;
-
-                //Loads most previous move string
-                savedSpot = moveList.get(numMoves);
+//                //Removes the signal "0747" move
+//                moveList.remove(numMoves);
+//
+//                //Decrements to show the removal
+//                numMoves--;
+//
+//                //Loads most previous move string
+//                savedSpot = moveList.get(numMoves);
 
                 //Takes the char from 0-3, turns it into a string, parses it into an int
                 int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
@@ -475,10 +497,10 @@ public class ChessModel implements IChessModel {
                 move(m);
 
                 //if statement for pawn placement
-                if (toCol > fromCol){
-                    setPiece(toRow, toCol - 1, new Pawn(currentPlayer().next()));
-                } else {
+                if (toCol < fromCol){
                     setPiece(toRow, toCol + 1, new Pawn(currentPlayer().next()));
+                } else {
+                    setPiece(toRow, toCol - 1, new Pawn(currentPlayer().next()));
                 }
             }
 
@@ -733,7 +755,9 @@ public class ChessModel implements IChessModel {
                         && board[pawnToRow][pawnToCol].player() != p) {
                     if (move.fromRow == pawnToRow &&
                             move.toRow + direction == pawnToRow && move.toColumn == pawnToCol) {
-
+                        //Increments piecesTaken, Adds piece taken to arrayList
+                        piecesTaken++;
+                        takenPieces.add(piecesTaken, board[pawnToRow][pawnFromCol]);
                         //Sets piece move to null
                         setPiece(pawnToRow, pawnFromCol, null);
                         return true;
