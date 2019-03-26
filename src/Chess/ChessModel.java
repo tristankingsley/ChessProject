@@ -333,7 +333,6 @@ public class ChessModel implements IChessModel {
 
         //Add string to ArrayList of strings
         moveList.add(numMoves, saveSpot);
-        System.out.println(moveList);
     }
 
     public void undoMove(){
