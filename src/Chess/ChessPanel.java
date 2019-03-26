@@ -7,6 +7,8 @@ import javax.swing.*;
 /*******************************************************************************************************************
  * This class uses buttons, toggles, labels, and panels in order to create
  * a working user-interface for the game of Chess
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
  ******************************************************************************************************************/
 public class ChessPanel extends JPanel {
 
@@ -350,6 +352,7 @@ public class ChessPanel extends JPanel {
                             fromRow = r;
                             fromCol = c;
                             firstTurnFlag = false;
+
                             //If you clicked on a valid piece, text set to selected
                             if (model.pieceAt(r, c) != null)
                                 selected.setText("Selected");
@@ -363,26 +366,33 @@ public class ChessPanel extends JPanel {
                             toRow = r;
                             toCol = c;
                             firstTurnFlag = true;
+
                             //Creates move object
                             Move m = new Move(fromRow, fromCol, toRow, toCol);
+
                             //Checks validity of move object
                             if ((model.isValidMove(m)) == true) {
+
                                 //Saving before moving so that if there is
                                 //a piece in the 'TO' spot, we can save it's
                                 //type before it disappears
                                 model.saveMove(fromRow, fromCol, toRow, toCol);
+
                                 //Makes move
                                 model.move(m);
 
                                 //Checks to see if pawn made it in endzone
                                 if (model.pawnInEndzone()) {
+
                                     //Array of transformation options
                                     String[] options = {"Queen", "Bishop", "Rook", "Knight"};
+
                                     //Opens JOptionPane with four buttons for transformation options
                                     int type = JOptionPane.showOptionDialog(null,
                                             "What do you want your pawn to transform into?",
                                             "Pawn transformation", JOptionPane.YES_NO_CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
                                     //Runs transformation method
                                     model.pawnTransform(options[type]);
                                 }
@@ -415,8 +425,10 @@ public class ChessPanel extends JPanel {
                                     turn.setText(model.currentPlayer().toString() + "'S TURN");
 
                                 }
+
                                 //If not a valid move, then sets text to Not Selected
                                 selected.setText("Not selected");
+
                                 //Updates the viewable board
                                 displayBoard();
                             }
@@ -424,8 +436,10 @@ public class ChessPanel extends JPanel {
                     }
                 }
             }
+
             //If statement for clicking reset button
             if(reset == event.getSource()){
+
                 //Runs constructor for model and displays new board
                 model = new ChessModel();
                 displayBoard();
@@ -433,6 +447,7 @@ public class ChessPanel extends JPanel {
 
             //If statement for clicking undo button
             if (undoBtn == event.getSource()) {
+
                 //Sets next player, undoes move, updates board
                 model.setNextPlayer();
                 model.undoMove();
@@ -441,14 +456,18 @@ public class ChessPanel extends JPanel {
 
             //If statement for Castling right
             if (castleRight == event.getSource()){
+
                 //Double checks boolean method for castling
                 if(model.canCastleRight(model.currentPlayer())) {
+
                     //Performs castle method, updates board, sets next player
                     model.castleRight(model.currentPlayer());
                     displayBoard();
                     model.setNextPlayer();
+
                     //If statement for checking is AI is toggled on
                     if (AI.isSelected()) {
+
                         //Runs AI after castling, updates board, sets next player
                         model.AI();
                         displayBoard();
@@ -459,14 +478,18 @@ public class ChessPanel extends JPanel {
 
             //If statement for Castling Left
             if (castleLeft == event.getSource()){
+
                 //Double checks boolean method for castling
                 if(model.canCastleLeft(model.currentPlayer())) {
+
                     //Performs castle method, updates board, sets next player
                     model.castleLeft(model.currentPlayer());
                     displayBoard();
                     model.setNextPlayer();
+
                     //Checks if AI is turned on
                     if (AI.isSelected()) {
+
                         //If so, run AI, updates board, then sets next player
                         model.AI();
                         displayBoard();
@@ -480,14 +503,17 @@ public class ChessPanel extends JPanel {
 
                 //Sets next player to see if THAT player has put the enemy in check
                 model.setNextPlayer();
+
                 //Shows message saying who has won
                 JOptionPane.showMessageDialog(null,
                         "Game Over!" + "\n" + model.currentPlayer()
                                 + "has won!");
+
                 //Shows messages to click reset button if wanting to play again
                 JOptionPane.showMessageDialog(null,
                         "Please click the 'OKAY; button if you" +
                                 "\n would like to play again!");
+
                 //Resets board anyway :)
                 model = new ChessModel();
                 displayBoard();

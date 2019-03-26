@@ -1,3 +1,10 @@
+/*******************************************************************************************************************
+ * This class models the chess program, runs logic behind saving moves, undoing moves, and moving for the AI
+ *
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
+ ******************************************************************************************************************/
+
 package Chess;
 
 
@@ -471,14 +478,14 @@ public class ChessModel implements IChessModel {
             //Else covers En Passant
             else if (savedSpot.equals("0474")){
 
-//                //Removes the signal "0747" move
-//                moveList.remove(numMoves);
-//
-//                //Decrements to show the removal
-//                numMoves--;
-//
-//                //Loads most previous move string
-//                savedSpot = moveList.get(numMoves);
+                //Removes the signal "0747" move
+                moveList.remove(numMoves);
+
+                //Decrements to show the removal
+                numMoves--;
+
+                //Loads most previous move string
+                savedSpot = moveList.get(numMoves);
 
                 //Takes the char from 0-3, turns it into a string, parses it into an int
                 int toRow = Integer.parseInt(Character.toString(savedSpot.charAt(0)));
