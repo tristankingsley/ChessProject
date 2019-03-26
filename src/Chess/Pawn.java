@@ -1,11 +1,28 @@
+/*******************************************************************************************************************
+ * This class creates a pawn as a chess piece for our chess program
+ *
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
+ ******************************************************************************************************************/
 package Chess;
 
 public class Pawn extends ChessPiece {
 
+	/*******************************************************************************************************************
+	 * Return the player that owns this piece.
+	 *
+	 * @return the player that owns this piece.
+	 ******************************************************************************************************************/
 	public Pawn(Player player) {
 		super(player);
 	}
 
+	/*******************************************************************************************************************
+	 * Return the type of this piece ("King", "Queen", "Rook", etc.).  Note:  In this case "type" refers to the game
+	 * of chess, not the type of the Java class.
+	 *
+	 * @return the type of this piece
+	 ******************************************************************************************************************/
 	public String type() {
 		return "Pawn";
 	}
@@ -33,8 +50,10 @@ public class Pawn extends ChessPiece {
 			//Checks for empty spots since pawns can't capture by moving forward
 			if (move.fromRow != 0 && move.fromRow != 7 && move.fromColumn == move.toColumn
 					&& board[move.fromRow - direction][move.fromColumn] == null) {
+
 				//checks to see if it's the pawns first move
 				if (move.fromRow == 1 || move.fromRow == 6) {
+
 					//can move one or 2 spaces in the right direction
 					if ((move.fromRow - move.toRow) == 2 * direction && board[move.toRow][move.toColumn] == null)
 						return true;
@@ -42,6 +61,7 @@ public class Pawn extends ChessPiece {
 						return true;
 
 				}
+
 				//otherwise pawn must only move forward by one in the right direction
 				else if ((move.fromRow - move.toRow) == direction)
 					return true;
@@ -64,7 +84,6 @@ public class Pawn extends ChessPiece {
 
 
 		}
-        // More code is needed
 		return false;
 	}
 

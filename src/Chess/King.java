@@ -1,11 +1,29 @@
+/*******************************************************************************************************************
+ * This class creates a king as a chess piece for our chess program
+ *
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
+ ******************************************************************************************************************/
+
 package Chess;
 
 public class King extends ChessPiece {
 
+	/*******************************************************************************************************************
+	 * Return the player that owns this piece.
+	 *
+	 * @return the player that owns this piece.
+	 ******************************************************************************************************************/
 	public King(Player player) {
 		super(player);
 	}
 
+	/*******************************************************************************************************************
+	 * Return the type of this piece ("King", "Queen", "Rook", etc.).  Note:  In this case "type" refers to the game
+	 * of chess, not the type of the Java class.
+	 *
+	 * @return the type of this piece
+	 ******************************************************************************************************************/
 	public String type() {
 		return "King";
 	}
@@ -24,8 +42,10 @@ public class King extends ChessPiece {
 	 * 									{@code [move.fromRow, move.fromColumn]}.
 	 ******************************************************************************************************************/
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
-        // More code is needed
+
 		if(super.isValidMove(move, board)) {
+
+			// can only move one space away from orignial spot
 			if ((Math.abs(move.toColumn - move.fromColumn)
 					+ Math.abs(move.toRow - move.fromRow) == 1) ||
 					(Math.abs(move.toColumn - move.fromColumn) == 1 &&
@@ -35,10 +55,5 @@ public class King extends ChessPiece {
 		}
 
 		return false;
-	}
-
-	public boolean inCheck() {
-
-		return true;
 	}
 }

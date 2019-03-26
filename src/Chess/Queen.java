@@ -1,12 +1,29 @@
+/*******************************************************************************************************************
+ * This class creates a queen as a chess piece for our chess program
+ *
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
+ ******************************************************************************************************************/
 package Chess;
 
 public class Queen extends ChessPiece {
 
+	/*******************************************************************************************************************
+	 * Return the player that owns this piece.
+	 *
+	 * @return the player that owns this piece.
+	 ******************************************************************************************************************/
 	public Queen(Player player) {
 		super(player);
 
 	}
 
+	/*******************************************************************************************************************
+	 * Return the type of this piece ("King", "Queen", "Rook", etc.).  Note:  In this case "type" refers to the game
+	 * of chess, not the type of the Java class.
+	 *
+	 * @return the type of this piece
+	 ******************************************************************************************************************/
 	public String type() {
 		return "Queen";
 		
@@ -26,6 +43,9 @@ public class Queen extends ChessPiece {
 	 ******************************************************************************************************************/
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 		if(super.isValidMove(move, board)) {
+
+			//can use the bishop or rook's methods
+
 			Bishop move1 = new Bishop(board[move.fromRow][move.fromColumn].player());
 			Rook move2 = new Rook(board[move.fromRow][move.fromColumn].player());
 			return (move2.isValidMove(move, board) || move1.isValidMove(move, board));

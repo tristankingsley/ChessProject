@@ -1,11 +1,28 @@
+/*******************************************************************************************************************
+ * This class creates a bishop as a chess piece for our chess program
+ *
+ * @author Tristan Kingsley, Trevor Spitzley, Kyle Kukla
+ * @version Spring 2019
+ ******************************************************************************************************************/
 package Chess;
 
 public class Bishop extends ChessPiece {
 
+	/*******************************************************************************************************************
+	 * Return the player that owns this piece.
+	 *
+	 * @return the player that owns this piece.
+	 ******************************************************************************************************************/
 	public Bishop(Player player) {
 		super(player);
 	}
 
+	/*******************************************************************************************************************
+	 * Return the type of this piece ("King", "Queen", "Rook", etc.).  Note:  In this case "type" refers to the game
+	 * of chess, not the type of the Java class.
+	 *
+	 * @return the type of this piece
+	 ******************************************************************************************************************/
 	public String type() {
 		return "Bishop";
 	}
@@ -24,6 +41,7 @@ public class Bishop extends ChessPiece {
 	 ******************************************************************************************************************/
 	public boolean isValidMove(Move move, IChessPiece[][] board) {
 
+		//only can move diagonally
 		if(super.isValidMove(move, board)) {
 				if ((Math.abs(move.fromRow - move.toRow) == Math.abs(move.fromColumn - move.toColumn) &&
 						(move.fromColumn != move.toColumn || move.fromRow != move.toRow))
@@ -35,6 +53,11 @@ public class Bishop extends ChessPiece {
 		return false;
 	}
 
+	/*******************************************************************************************************************
+	 * Checks to see if there are pieces in the way of the piece's attempted move
+	 *
+	 * @return {code.true} if there aren't pieces in the way, else {code.false}
+	 ******************************************************************************************************************/
 	private boolean clearPath(Move move, IChessPiece[][] board){
 
 		//initialized to 1 if the move happens to be up and right
