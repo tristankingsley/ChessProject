@@ -307,6 +307,14 @@ public class ChessModel implements IChessModel {
         return true;
     }
 
+    /*******************************************************************************************************************
+     * This method saves the coordinates for every valid move, given the
+     * respective 'to' and 'from' Row/Columns
+     * @param fromRow Represents the row of the piece before the move
+     * @param fromCol Represents the column of the piece before the move
+     * @param toRow Represents the row of the piece after the move
+     * @param toCol Represents the column of the piece after the move
+     ******************************************************************************************************************/
     public void saveMove(int fromRow, int fromCol, int toRow, int toCol) {
 
         //Incremented BEFORE saving to ensure FIRST moves saves in element
@@ -342,6 +350,12 @@ public class ChessModel implements IChessModel {
         moveList.add(numMoves, saveSpot);
     }
 
+    /*******************************************************************************************************************
+     * This method accesses the ArrayList 'MovesList' in order to replicate the last move
+     * done all the way up to the very first move. With respect to a normal movecastling,
+     * piece capture, pawn transformation, enPassant, as well as pawn transforming while
+     * also capturing a piece
+     ******************************************************************************************************************/
     public void undoMove(){
         if (numMoves > 0) {
 
@@ -510,7 +524,7 @@ public class ChessModel implements IChessModel {
                 }
             }
 
-            //Else covers everything else
+            //Else covers a simple valid move, including piece capture
             else {
 
                 //Takes the char from 0-3, turns it into a string, parses it into an int
@@ -543,13 +557,18 @@ public class ChessModel implements IChessModel {
         }
     }
 
-
+    /*******************************************************************************************************************
+     * This method returns a boolean to represent whether you can use the castling method in chess,
+     * after checking for empty pieces, first move booleans, as well as piece type
+     * @param p Representing the player that is attempting to castle
+     * @return {@code true} For if you may castle, but {@code false} if not
+     ******************************************************************************************************************/
     public boolean canCastleLeft(Player p){
 
         //Creates boolean
         boolean valid = false;
 
-        //Checks for being a black player1
+        //Checks for being a black player
         if (p == player2){
 
             //Checks to make sure we are not in check
@@ -570,7 +589,8 @@ public class ChessModel implements IChessModel {
                     }
                 }
             }
-        } else if (p == player1){
+        } //Checks for being white player
+        else if (p == player1){
 
             //Checks to make sure we are not in check
             if (!inCheck(p)) {
@@ -594,10 +614,15 @@ public class ChessModel implements IChessModel {
         return valid;
     }
 
+    /*******************************************************************************************************************
+     * This method performs the castling technique in chess if the respective canCastle method returns true
+     * @param p Representing the player that is attempting to castle
+     ******************************************************************************************************************/
     public void castleLeft(Player p){
 
         //Checks for player
         if (p == player2){
+            //Checks if you can castle left side
             if (canCastleLeft(p)){
 
                 //Create move objects, move, save
@@ -610,6 +635,7 @@ public class ChessModel implements IChessModel {
                 saveMove(7, 7, 7, 7);
                 move(m);
                 move(m1);
+                //If in check though, undo moves cause you can't castle into check
                 if (inCheck(p)){
                     undoMove();
                 }
@@ -618,6 +644,7 @@ public class ChessModel implements IChessModel {
 
         //Checks for player
         else if (p == player1){
+            //Double checks if allowed to castle
             if (canCastleLeft(p)) {
 
                 //Create move objects, move, save
@@ -641,6 +668,12 @@ public class ChessModel implements IChessModel {
         }
     }
 
+    /*******************************************************************************************************************
+     * This method returns a boolean to represent whether you can use the castling method in chess,
+     * after checking for empty pieces, first move booleans, as well as piece type
+     * @param p Representing the player that is attempting to castle
+     * @return {@code true} For if you may castle, but {@code false} if not
+     ******************************************************************************************************************/
     public boolean canCastleRight(Player p){
 
         //Creates boolean
@@ -689,6 +722,10 @@ public class ChessModel implements IChessModel {
         return valid;
     }
 
+    /*******************************************************************************************************************
+     * This method performs the castling technique in chess if the respective canCastle method returns true
+     * @param p Representing the player that is attempting to castle
+     ******************************************************************************************************************/
     public void castleRight(Player p){
 
         //Checks for player
