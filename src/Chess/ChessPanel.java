@@ -350,6 +350,7 @@ public class ChessPanel extends JPanel {
 
 
             if (undoBtn == event.getSource()) {
+                model.setNextPlayer();
                 model.undoMove();
                 displayBoard();
             }

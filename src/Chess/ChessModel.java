@@ -101,7 +101,7 @@ public class ChessModel implements IChessModel {
      * @param move a {@link Chess.Move} object describing the move to be made.
      * @return {@code true} if the proposed move is valid, {@code false} otherwise.
      * @throws IndexOutOfBoundsException if either {@code [move.fromRow, move.fromColumn]} or {@code [move.toRow,
-                                        move.toColumn]} don't represent valid locations on the board.
+    move.toColumn]} don't represent valid locations on the board.
      ******************************************************************************************************************/
     public boolean isValidMove(Move move) {
         if(move.fromRow < 0 || move.fromRow > 7 || move.toRow < 0 || move.toRow > 7 || move.fromColumn < 0
@@ -285,19 +285,19 @@ public class ChessModel implements IChessModel {
                                 move(new Move(row, col, atrow, atcol));
 
                                 // if the player isn't in check, undo move, and return false
-                            if (!inCheck(currentPlayer())){
-                                undoMove();
-                                return false;
-                            }
+                                if (!inCheck(currentPlayer())){
+                                    undoMove();
+                                    return false;
+                                }
 
-                            //otherwise undo move and keep checking
-                            else
-                                undoMove();
-                        }
+                                //otherwise undo move and keep checking
+                                else
+                                    undoMove();
+                            }
                         }
                     }
                 }
-                    return true;
+        return true;
     }
 
     public void saveMove(int fromRow, int fromCol, int toRow, int toCol) {
@@ -327,7 +327,7 @@ public class ChessModel implements IChessModel {
 
         //If statement for pawn in endzone
         if (board[fromRow][fromCol].type().equals("Pawn")
-            && (toRow == 7 || toRow == 0)){
+                && (toRow == 7 || toRow == 0)){
             saveSpot += "@";
         }
 
@@ -460,7 +460,7 @@ public class ChessModel implements IChessModel {
                 move(m);
 
                 //Sets pawn
-                setPiece(toRow, toCol, new Pawn(currentPlayer().next()));
+                setPiece(toRow, toCol, new Pawn(currentPlayer()));
 
                 //Removes the pawn transformation move
                 moveList.remove(numMoves);
@@ -826,8 +826,8 @@ public class ChessModel implements IChessModel {
         //If statement for whiteRightRook
         if (board[m.fromRow][m.fromColumn] != null
                 && board[m.fromRow][m.fromColumn].type().equals("Rook")
-            && (m.toRow == 7 && m.toColumn == 7)
-            && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
+                && (m.toRow == 7 && m.toColumn == 7)
+                && board[m.fromRow][m.fromColumn].player() == currentPlayer()){
             whiteRightRook = true;
         }
 
@@ -889,7 +889,7 @@ public class ChessModel implements IChessModel {
     }
 
     public void setNextPlayer() {
-       player1 = player1.next();
+        player1 = player1.next();
     }
 
     public void setPiece(int row, int column, IChessPiece piece) {
@@ -1099,9 +1099,9 @@ public class ChessModel implements IChessModel {
 
 
                                                     //if AI couldn't capture the threat
-                                                     if (!goneYet) {
+                                                    if (!goneYet) {
 
-                                                    //attempted move coordinates
+                                                        //attempted move coordinates
                                                         for (int t = 0; t < 8; t++)
                                                             for (int q = 0; q < 8; q++)
 
@@ -1176,7 +1176,7 @@ public class ChessModel implements IChessModel {
                                                 if (board[o][p] != null && board[k][l] != null
                                                         && board[o][p].player() == Player.WHITE
                                                         && board[o][p].isValidMove(new Move(o, p, k, l), board) ||
-                                                    inCheck(Player.BLACK)) {
+                                                        inCheck(Player.BLACK)) {
                                                     inDanger = true;
                                                 }
                                         }
